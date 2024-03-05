@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+model User {
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  password_hash String
+  phone         String?
+  cpf           String?
+  role          Role     @default(MEMBER)
+  created_at    DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  profile Profile?
+
+  orders Order[]
+
+  @@map("tb_users")
+}
+
+model Profile {
+  id         Int     @id @default(autoincrement())
+  avatar_url String?
+  user       User    @relation(fields: [userId], references: [id])
+  userId     String  @unique
+
+  @@map("tb_profiles")
+}
+
+model Order {
+  id           Int      @id @default(autoincrement())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  status       String
+  user         User?    @relation(fields: [userId], references: [id])
+  userId       String?
+  products_ids Int[]
+  json         Json?
+
+  @@map("tb_orders")
+}
+
+model Product {
+  id             String   @id @default(uuid())
+  id_woocommerce Int?     @unique
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  name           String
+  price          Decimal
+  files          File[]
+
+  @@map("tb_products")
+}
+
+model File {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  url       String
+  productId String
+  products  Product  @relation(fields: [productId], references: [id])
+
+  @@map("tb_files")
+}
