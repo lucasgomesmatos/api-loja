@@ -1,8 +1,8 @@
 export interface OrderProps {
   id: number;
   status: string;
-  user_id: string;
-  products: number[];
+  userId: string;
+  productsIds: string;
   json: string;
 }
 

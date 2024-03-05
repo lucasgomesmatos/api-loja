@@ -3,13 +3,15 @@ import { OrderProps, OrdersRepository } from "../orders-repository";
 
 export class PrismaOrdersRepository implements OrdersRepository {
   async create(data: OrderProps): Promise<void> {
+    const { id, status, userId, productsIds, json } = data;
+
     await prisma.order.create({
       data: {
-        status: data.status,
-        id: data.id,
-        userId: data.user_id,
-        products_ids: data.products,
-        json: data.json,
+        id,
+        status,
+        userId,
+        productsIds,
+        json,
       },
     });
   }

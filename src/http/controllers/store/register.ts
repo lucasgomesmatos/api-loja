@@ -32,14 +32,31 @@ export async function registerUserStore(
     request.body,
   );
 
+  const billingParams = {
+    firstName: billing.first_name,
+    lastName: billing.last_name,
+    email: billing.email,
+    phone: billing.phone,
+    cpf: billing.cpf,
+  };
+
+  const lineItemsParams = line_items.map((lineItem) => {
+    return {
+      id: lineItem.id,
+      name: lineItem.name,
+      productId: lineItem.product_id,
+      price: lineItem.price,
+    };
+  });
+
   try {
     const registerUserStoreUseCase = makeRegisterUserStoreUseCase();
 
     registerUserStoreUseCase.execute({
       id,
       status,
-      billing,
-      line_items,
+      billing: billingParams,
+      lineItems: lineItemsParams,
     });
   } catch (error) {
     if (error instanceof UserAlreadyExistsError) {

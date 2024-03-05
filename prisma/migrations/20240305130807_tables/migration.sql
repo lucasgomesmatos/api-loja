@@ -27,11 +27,13 @@ CREATE TABLE "tb_profiles" (
 
 -- CreateTable
 CREATE TABLE "tb_orders" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "status" TEXT NOT NULL,
     "userId" TEXT,
+    "productsIds" JSONB NOT NULL,
+    "json" JSONB,
 
     CONSTRAINT "tb_orders_pkey" PRIMARY KEY ("id")
 );
@@ -39,12 +41,10 @@ CREATE TABLE "tb_orders" (
 -- CreateTable
 CREATE TABLE "tb_products" (
     "id" TEXT NOT NULL,
-    "idWoocommerce" TEXT,
+    "name" TEXT NOT NULL,
+    "idWoocommerce" INTEGER,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "name" TEXT NOT NULL,
-    "price" DECIMAL(65,30) NOT NULL,
-    "orderId" TEXT,
 
     CONSTRAINT "tb_products_pkey" PRIMARY KEY ("id")
 );
@@ -52,10 +52,10 @@ CREATE TABLE "tb_products" (
 -- CreateTable
 CREATE TABLE "tb_files" (
     "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+    "keyFile" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "name" TEXT NOT NULL,
-    "url" TEXT NOT NULL,
     "productId" TEXT NOT NULL,
 
     CONSTRAINT "tb_files_pkey" PRIMARY KEY ("id")
@@ -68,6 +68,9 @@ CREATE UNIQUE INDEX "tb_users_email_key" ON "tb_users"("email");
 CREATE UNIQUE INDEX "tb_profiles_userId_key" ON "tb_profiles"("userId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "tb_products_name_key" ON "tb_products"("name");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "tb_products_idWoocommerce_key" ON "tb_products"("idWoocommerce");
 
 -- AddForeignKey
@@ -75,9 +78,6 @@ ALTER TABLE "tb_profiles" ADD CONSTRAINT "tb_profiles_userId_fkey" FOREIGN KEY (
 
 -- AddForeignKey
 ALTER TABLE "tb_orders" ADD CONSTRAINT "tb_orders_userId_fkey" FOREIGN KEY ("userId") REFERENCES "tb_users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "tb_products" ADD CONSTRAINT "tb_products_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "tb_orders"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "tb_files" ADD CONSTRAINT "tb_files_productId_fkey" FOREIGN KEY ("productId") REFERENCES "tb_products"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
