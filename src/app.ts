@@ -1,4 +1,5 @@
 import fastifyCookie from "@fastify/cookie";
+import cors from "@fastify/cors";
 import fastifyJwt from "@fastify/jwt";
 import fastify from "fastify";
 import { ZodError } from "zod";
@@ -20,11 +21,15 @@ app.register(fastifyJwt, {
   },
 });
 
+app.register(cors, {
+  origin: "*",
+});
+
 app.register(fastifyCookie);
 app.register(usersRoutes);
 app.register(usersStoreRoutes);
 app.register(uploadsRoutes);
-// app.register(usersRoutes);
+
 
 app.setErrorHandler((error, _, reply) => {
   if (error instanceof ZodError) {

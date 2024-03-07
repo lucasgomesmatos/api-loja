@@ -1,15 +1,20 @@
 import { prisma } from "@/lib/prisma";
 import { Product } from "@prisma/client";
-import { ProductsRepository } from "../products-repository";
+import {
+  FindAllProductsParams,
+  ProductsRepository,
+} from "../products-repository";
 
 export class PrismaProductsRepository implements ProductsRepository {
-  async findAll(ids: number[]) {
+  async findAllProducts({ query, page }: FindAllProductsParams) {
     const products = await prisma.product.findMany({
       where: {
-        idWoocommerce: {
-          in: ids,
+        name: {
+          contains: query,
         },
       },
+      skip: (page - 1) * 12,
+      take: 12,
     });
 
     return products;
@@ -27,7 +32,7 @@ export class PrismaProductsRepository implements ProductsRepository {
   }
 
   async findByName(name: string) {
-    const product = await prisma.product.findFirst({
+    const product = await prisma.product.findUnique({
       where: {
         name,
       },

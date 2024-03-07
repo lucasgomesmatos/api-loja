@@ -6,6 +6,14 @@ export interface FileProps {
   productId: string;
 }
 
+export interface GetAllFileProps {
+  query: string;
+  page: number;
+  productId: string;
+}
+
 export interface FilesRepository {
   create(data: FileProps): Promise<File>;
+
+  getAllFilesByProductId(data: GetAllFileProps): Promise<File[]>;
 }
