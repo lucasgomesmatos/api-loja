@@ -15,5 +15,9 @@ export interface GetAllFileProps {
 export interface FilesRepository {
   create(data: FileProps): Promise<File>;
 
-  getAllFilesByProductId(data: GetAllFileProps): Promise<File[]>;
+  getAllFilesByProductIdPaginate(data: GetAllFileProps): Promise<File[]>;
+
+  getAllFilesByProductId(productId: string): Promise<File[]>;
+
+  deleteALlFilesByProductId(productId: string): Promise<void>;
 }

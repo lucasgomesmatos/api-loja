@@ -40,4 +40,22 @@ export class PrismaProductsRepository implements ProductsRepository {
 
     return product;
   }
+
+  async findById(id: string) {
+    const product = await prisma.product.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    return product;
+  }
+
+  async deleteById(id: string) {
+    await prisma.product.delete({
+      where: {
+        id,
+      },
+    });
+  }
 }

@@ -20,7 +20,7 @@ export class PrismaFilesRepository implements FilesRepository {
     return file;
   }
 
-  async getAllFilesByProductId(data: GetAllFileProps) {
+  async getAllFilesByProductIdPaginate(data: GetAllFileProps) {
     const { productId, page, query } = data;
 
     const files = await prisma.file.findMany({
@@ -35,5 +35,23 @@ export class PrismaFilesRepository implements FilesRepository {
     });
 
     return files;
+  }
+
+  async getAllFilesByProductId(productId: string) {
+    const files = await prisma.file.findMany({
+      where: {
+        productId,
+      },
+    });
+
+    return files;
+  }
+
+  async deleteALlFilesByProductId(productId: string) {
+    await prisma.file.deleteMany({
+      where: {
+        productId,
+      },
+    });
   }
 }

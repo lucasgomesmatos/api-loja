@@ -23,13 +23,13 @@ app.register(fastifyJwt, {
 
 app.register(cors, {
   origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE"],
 });
 
 app.register(fastifyCookie);
 app.register(usersRoutes);
 app.register(usersStoreRoutes);
 app.register(uploadsRoutes);
-
 
 app.setErrorHandler((error, _, reply) => {
   if (error instanceof ZodError) {

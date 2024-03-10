@@ -1,32 +1,54 @@
+import { environment } from "@/env/env";
+import { s3 } from "@/lib/aws-s3";
 import { FilesRepository } from "@/repositories/files-repository";
-import { File } from "@prisma/client";
+import { GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 interface GetFilesUseCaseRequest {
   productId: string;
-  query: string;
-  page: number;
+}
+
+interface FileContent {
+  id: number;
+  name: string;
+  url: string;
+  keyFile: string;
+  product: string;
 }
 
 interface GetFilesUseCaseResponse {
-  files: File[];
+  files: FileContent[];
 }
 
 export class GetFilesUseCase {
   constructor(private readonly filesRepository: FilesRepository) {}
 
   async execute({
-    page,
-    query,
     productId,
   }: GetFilesUseCaseRequest): Promise<GetFilesUseCaseResponse> {
-    const files = await this.filesRepository.getAllFilesByProductId({
-      productId,
-      page,
-      query,
-    });
+    const files = await this.filesRepository.getAllFilesByProductId(productId);
+
+    const content: FileContent[] = [];
+
+    for (const file of files) {
+      const signedUrl = await getSignedUrl(
+        s3,
+        new GetObjectCommand({
+          Bucket: environment.AWS_BUCKET_NAME,
+          Key: file.keyFile,
+        }),
+      );
+      content.push({
+        id: file.id,
+        name: file.name,
+        url: signedUrl,
+        keyFile: file.keyFile,
+        product: file.productId,
+      });
+    }
 
     return {
-      files,
+      files: content,
     };
   }
 }
