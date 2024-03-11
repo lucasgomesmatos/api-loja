@@ -54,4 +54,14 @@ export class PrismaFilesRepository implements FilesRepository {
       },
     });
   }
+
+  async deleteAllFiles(ids: number[]) {
+    await prisma.file.deleteMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+  }
 }

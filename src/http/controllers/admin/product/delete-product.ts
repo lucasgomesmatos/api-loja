@@ -15,11 +15,9 @@ export async function deleteProduct(
 
   try {
     const deleteProductUseCase = makeDeleteProductUseCase();
-    const product = await deleteProductUseCase.execute({
+    await deleteProductUseCase.execute({
       productId,
     });
-
-    console.log(JSON.stringify(product));
 
     return reply.send().status(204);
   } catch (error: unknown) {

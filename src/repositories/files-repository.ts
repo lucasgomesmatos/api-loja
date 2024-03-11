@@ -20,4 +20,6 @@ export interface FilesRepository {
   getAllFilesByProductId(productId: string): Promise<File[]>;
 
   deleteALlFilesByProductId(productId: string): Promise<void>;
+
+  deleteAllFiles(ids: number[]): Promise<void>;
 }

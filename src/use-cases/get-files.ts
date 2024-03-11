@@ -13,7 +13,7 @@ interface FileContent {
   name: string;
   url: string;
   keyFile: string;
-  product: string;
+  productId: string;
 }
 
 interface GetFilesUseCaseResponse {
@@ -43,7 +43,7 @@ export class GetFilesUseCase {
         name: file.name,
         url: signedUrl,
         keyFile: file.keyFile,
-        product: file.productId,
+        productId: file.productId,
       });
     }
 
