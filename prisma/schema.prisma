@@ -61,6 +61,8 @@ model Product {
 
   files File[]
 
+  categories Category[]
+
   @@map("tb_products")
 }
 
@@ -70,10 +72,20 @@ model File {
   keyFile String
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
   products  Product @relation(fields: [productId], references: [id])
   productId String
 
   @@map("tb_files")
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products Product[]
+
+  @@map("tb_categories")
 }

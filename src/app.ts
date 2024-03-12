@@ -4,7 +4,8 @@ import fastifyJwt from "@fastify/jwt";
 import fastify from "fastify";
 import { ZodError } from "zod";
 import { environment } from "./env/env";
-import { uploadsRoutes } from "./http/controllers/admin/product/routes";
+import { categoriesRoutes } from "./http/controllers/admin/category/routes";
+import { productsRoutes } from "./http/controllers/admin/product/routes";
 import { usersRoutes } from "./http/controllers/admin/users/routes";
 import { usersStoreRoutes } from "./http/controllers/store/routes";
 
@@ -29,7 +30,8 @@ app.register(cors, {
 app.register(fastifyCookie);
 app.register(usersRoutes);
 app.register(usersStoreRoutes);
-app.register(uploadsRoutes);
+app.register(productsRoutes);
+app.register(categoriesRoutes);
 
 app.setErrorHandler((error, _, reply) => {
   if (error instanceof ZodError) {

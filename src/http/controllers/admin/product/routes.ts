@@ -6,7 +6,7 @@ import { uploadFiles } from "./files";
 import { getAllProducts } from "./get-all-products";
 import { getAllFilesByProductId } from "./get-files";
 
-export async function uploadsRoutes(app: FastifyInstance) {
+export async function productsRoutes(app: FastifyInstance) {
   app.post("/uploads", { onRequest: [verifyJwt] }, uploadFiles);
   app.get("/products", { onRequest: [verifyJwt] }, getAllProducts);
   app.delete("/products/:productId", { onRequest: [verifyJwt] }, deleteProduct);
