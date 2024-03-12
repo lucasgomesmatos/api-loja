@@ -65,6 +65,9 @@ export class PrismaCategoriesRepository implements CategoriesRepository {
       },
       skip: data.paginate ? (data.page - 1) * 12 : 0,
       take: data.paginate ? 12 : undefined,
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     return categories;

@@ -1,6 +1,6 @@
+import { CategoriesRepository } from "@/repositories/categories-repository";
 import { Category } from "@prisma/client";
-import { CategoriesRepository } from "./../repositories/categories-repository";
-import { CategoryAlreadyExistsError } from "./erros/category-already-exists-error";
+import { CategoryAlreadyExistsError } from "../erros/category-already-exists-error";
 
 interface CreateProductUseCaseRequest {
   name: string;

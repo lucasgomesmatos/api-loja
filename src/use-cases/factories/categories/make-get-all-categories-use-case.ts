@@ -1,5 +1,5 @@
 import { PrismaCategoriesRepository } from "@/repositories/prisma/prisma-categories-repository";
-import { GetAllCategoriesUseCase } from "../get-all-categories";
+import { GetAllCategoriesUseCase } from "@/use-cases/categories-use-case/get-all-categories";
 
 export function makeGetAllCategoriesUseCase() {
   const prismaCategoriesRepository = new PrismaCategoriesRepository();

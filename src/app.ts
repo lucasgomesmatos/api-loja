@@ -4,8 +4,8 @@ import fastifyJwt from "@fastify/jwt";
 import fastify from "fastify";
 import { ZodError } from "zod";
 import { environment } from "./env/env";
-import { categoriesRoutes } from "./http/controllers/admin/category/routes";
-import { productsRoutes } from "./http/controllers/admin/product/routes";
+import { categoriesRoutes } from "./http/controllers/admin/categories/routes";
+import { productsRoutes } from "./http/controllers/admin/products/routes";
 import { usersRoutes } from "./http/controllers/admin/users/routes";
 import { usersStoreRoutes } from "./http/controllers/store/routes";
 

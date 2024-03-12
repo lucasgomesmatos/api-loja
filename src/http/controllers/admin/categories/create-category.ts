@@ -1,6 +1,4 @@
-// makeCreateCategoryUseCase
-
-import { makeCreateCategoryUseCase } from "@/use-cases/factories/make-create-category-use-case";
+import { makeCreateCategoryUseCase } from "@/use-cases/factories/categories/make-create-category-use-case";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
 
@@ -8,8 +6,10 @@ export async function createCategory(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {
+  console.log(JSON.stringify(request.body));
+
   const categoryBodySchema = z.object({
-    name: z.string(),
+    name: z.coerce.string(),
   });
 
   const { name } = categoryBodySchema.parse(request.body);

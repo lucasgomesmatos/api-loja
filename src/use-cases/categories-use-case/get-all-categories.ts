@@ -1,5 +1,5 @@
+import { CategoriesRepository } from "@/repositories/categories-repository";
 import { Category } from "@prisma/client";
-import { CategoriesRepository } from "./../repositories/categories-repository";
 
 interface GetAllCategoriesUseCaseRequest {
   page: number;

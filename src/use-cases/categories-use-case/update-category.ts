@@ -1,6 +1,6 @@
+import { CategoriesRepository } from "@/repositories/categories-repository";
 import { Category } from "@prisma/client";
-import { CategoriesRepository } from "./../repositories/categories-repository";
-import { ResourceNotFoundError } from "./erros/resource-not-found-error";
+import { ResourceNotFoundError } from "../erros/resource-not-found-error";
 
 interface UpdateProductUseCaseRequest {
   categoryId: string;

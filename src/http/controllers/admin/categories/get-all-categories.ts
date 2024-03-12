@@ -1,4 +1,4 @@
-import { makeGetAllCategoriesUseCase } from "@/use-cases/factories/make-get-all-categories-use-case";
+import { makeGetAllCategoriesUseCase } from "@/use-cases/factories/categories/make-get-all-categories-use-case";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
 

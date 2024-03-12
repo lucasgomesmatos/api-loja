@@ -1,5 +1,5 @@
 import { PrismaCategoriesRepository } from "@/repositories/prisma/prisma-categories-repository";
-import { UpdateCategoryUseCase } from "../update-category";
+import { UpdateCategoryUseCase } from "@/use-cases/categories-use-case/update-category";
 
 export function makeUpdateCategoryUseCase() {
   const prismaCategoriesRepository = new PrismaCategoriesRepository();
