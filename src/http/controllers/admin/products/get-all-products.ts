@@ -6,12 +6,15 @@ export async function getAllProducts(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {
-  const productBodySchema = z.object({
+  const productQuerySchema = z.object({
     page: z.coerce.number().min(1).default(1),
     query: z.string().default(""),
+    categories: z.string().optional(),
   });
 
-  const { page, query } = productBodySchema.parse(request.query);
+  const { page, query, categories } = productQuerySchema.parse(request.query);
+
+  const categoriesArray = categories?.split(",");
 
   try {
     const getAllProductsUseCase = makeGetAllProductsUseCase();
@@ -19,6 +22,7 @@ export async function getAllProducts(
     const { products } = await getAllProductsUseCase.execute({
       page,
       query,
+      categories: categoriesArray,
     });
 
     return reply.send(products);

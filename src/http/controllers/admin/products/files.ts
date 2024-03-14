@@ -12,9 +12,10 @@ export async function uploadFiles(
     nameProduct: z.string(),
     contentType: z.string(),
     nameFile: z.string(),
+    categories: z.array(z.string()),
   });
 
-  const { nameFile, contentType, idWoocommerce, nameProduct } =
+  const { nameFile, contentType, idWoocommerce, nameProduct, categories } =
     productBodySchema.parse(request.body);
 
   try {
@@ -25,6 +26,7 @@ export async function uploadFiles(
       contentType,
       nameFile,
       nameProduct,
+      categories,
     });
 
     return reply.status(201).send({ signedUrl });

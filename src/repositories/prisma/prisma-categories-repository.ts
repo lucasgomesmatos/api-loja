@@ -57,19 +57,25 @@ export class PrismaCategoriesRepository implements CategoriesRepository {
   }
 
   async findAllCategories(data: FindAllCategoriesParams) {
-    const categories = await prisma.category.findMany({
-      where: {
-        name: {
-          contains: data.query,
+    const [categories, total] = await prisma.$transaction([
+      prisma.category.findMany({
+        where: {
+          name: {
+            contains: data.query,
+          },
         },
-      },
-      skip: data.paginate ? (data.page - 1) * 12 : 0,
-      take: data.paginate ? 12 : undefined,
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+        skip: data.paginate ? (data.page - 1) * 16 : 0,
+        take: data.paginate ? 16 : undefined,
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+      prisma.category.count(),
+    ]);
 
-    return categories;
+    return {
+      categories,
+      total,
+    };
   }
 }

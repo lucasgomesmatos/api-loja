@@ -11,6 +11,7 @@ interface CreateProductUseCaseRequest {
   idWoocommerce: number;
   contentType: string;
   nameFile: string;
+  categories: string[];
 }
 
 interface CreateProductUseCaseResponse {
@@ -28,6 +29,7 @@ export class CreateProductUseCase {
     idWoocommerce,
     contentType,
     nameFile,
+    categories,
   }: CreateProductUseCaseRequest): Promise<CreateProductUseCaseResponse> {
     const { keyFile, signedUrl } = await this.uploadFile(nameFile, contentType);
 
@@ -37,6 +39,7 @@ export class CreateProductUseCase {
       product = await this.productsRepository.create({
         name: nameProduct,
         idWoocommerce,
+        categories,
       });
     }
 

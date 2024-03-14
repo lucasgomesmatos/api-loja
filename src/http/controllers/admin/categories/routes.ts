@@ -1,6 +1,7 @@
 import { verifyJwt } from "@/http/middlewares/verify-jwt";
 import { FastifyInstance } from "fastify";
 import { createCategory } from "./create-category";
+import { deleteCategory } from "./delete-category";
 import { getAllCategories } from "./get-all-categories";
 import { updateCategory } from "./update-category";
 
@@ -11,5 +12,10 @@ export async function categoriesRoutes(app: FastifyInstance) {
     "/categories/:categoryId",
     { onRequest: [verifyJwt] },
     updateCategory,
+  );
+  app.delete(
+    "/categories/:categoryId",
+    { onRequest: [verifyJwt] },
+    deleteCategory,
   );
 }

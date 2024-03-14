@@ -1,31 +1,56 @@
 import { prisma } from "@/lib/prisma";
-import { Product } from "@prisma/client";
 import {
+  CreateProduct,
   FindAllProductsParams,
   ProductsRepository,
 } from "../products-repository";
 
 export class PrismaProductsRepository implements ProductsRepository {
-  async findAllProducts({ query, page }: FindAllProductsParams) {
-    const products = await prisma.product.findMany({
+  async findAllProducts({ query, page, categories }: FindAllProductsParams) {
+    if (categories) {
+      return await prisma.product.findMany({
+        where: {
+          name: {
+            contains: query,
+          },
+          products: {
+            some: {
+              categoryId: {
+                in: categories,
+              },
+            },
+          },
+        },
+
+        skip: (page - 1) * 16,
+        take: 16,
+      });
+    }
+
+    return await prisma.product.findMany({
       where: {
         name: {
           contains: query,
         },
       },
-      skip: (page - 1) * 12,
-      take: 12,
+      skip: (page - 1) * 16,
+      take: 16,
     });
-
-    return products;
   }
 
-  async create(data: Product) {
+  async create(data: CreateProduct) {
     const product = await prisma.product.create({
       data: {
         idWoocommerce: data.idWoocommerce,
         name: data.name,
       },
+    });
+
+    await prisma.productsOnCategories.createMany({
+      data: data.categories.map((categoryId) => ({
+        productId: product.id,
+        categoryId,
+      })),
     });
 
     return product;

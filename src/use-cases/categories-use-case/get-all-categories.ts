@@ -9,6 +9,7 @@ interface GetAllCategoriesUseCaseRequest {
 
 interface GetAllCategoryUseCaseResponse {
   categories: Partial<Category>[];
+  total: number;
 }
 
 export class GetAllCategoriesUseCase {
@@ -19,17 +20,19 @@ export class GetAllCategoriesUseCase {
     paginate,
     query,
   }: GetAllCategoriesUseCaseRequest): Promise<GetAllCategoryUseCaseResponse> {
-    const categories = await this.categoriesRepository.findAllCategories({
-      page,
-      paginate,
-      query,
-    });
+    const { categories, total } =
+      await this.categoriesRepository.findAllCategories({
+        page,
+        paginate,
+        query,
+      });
 
     return {
       categories: categories.map((category) => ({
         id: category.id,
         name: category.name,
       })),
+      total,
     };
   }
 }

@@ -59,9 +59,8 @@ model Product {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  files File[]
-
-  categories Category[]
+  files    File[]
+  products ProductsOnCategories[]
 
   @@map("tb_products")
 }
@@ -85,7 +84,16 @@ model Category {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  products Product[]
+  categories ProductsOnCategories[]
 
   @@map("tb_categories")
+}
+
+model ProductsOnCategories {
+  productId  String
+  categoryId String
+  product    Product  @relation(fields: [productId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  @@id([productId, categoryId])
 }

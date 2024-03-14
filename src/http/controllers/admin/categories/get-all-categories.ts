@@ -6,24 +6,27 @@ export async function getAllCategories(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {
-  const productBodySchema = z.object({
+  const categoryQuerySchema = z.object({
     page: z.coerce.number().min(1).default(1),
     query: z.string().default(""),
     paginate: z.coerce.boolean().default(false),
   });
 
-  const { page, query, paginate } = productBodySchema.parse(request.query);
+  const { page, query, paginate } = categoryQuerySchema.parse(request.query);
 
   try {
     const getAllCategoriesUseCase = makeGetAllCategoriesUseCase();
 
-    const { categories } = await getAllCategoriesUseCase.execute({
+    const { categories, total } = await getAllCategoriesUseCase.execute({
       page,
       query,
       paginate,
     });
 
-    return reply.send(categories);
+    return reply.send({
+      categories,
+      total,
+    });
   } catch (error) {
     return reply.status(500).send({ message: "Internal server error" });
   }

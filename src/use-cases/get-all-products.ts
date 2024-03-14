@@ -4,6 +4,7 @@ import { ProductsRepository } from "./../repositories/products-repository";
 interface GetAllProductsUseCaseRequest {
   query: string;
   page: number;
+  categories: string[];
 }
 
 interface GetAllProductsUseCaseResponse {
@@ -16,10 +17,12 @@ export class GetAllProductsUseCase {
   async execute({
     page,
     query,
+    categories,
   }: GetAllProductsUseCaseRequest): Promise<GetAllProductsUseCaseResponse> {
     const products = await this.productsRepository.findAllProducts({
       page,
       query,
+      categories,
     });
 
     return {

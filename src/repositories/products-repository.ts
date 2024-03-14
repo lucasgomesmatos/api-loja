@@ -1,12 +1,19 @@
-import { Prisma, Product } from "@prisma/client";
+import { Product } from "@prisma/client";
 
 export interface FindAllProductsParams {
   query: string;
   page: number;
+  categories: string[] | undefined;
+}
+
+export interface CreateProduct {
+  name: string;
+  idWoocommerce: number;
+  categories: string[];
 }
 
 export interface ProductsRepository {
-  create(product: Prisma.ProductCreateInput): Promise<Product>;
+  create(data: CreateProduct): Promise<Product>;
 
   findByName(name: string): Promise<Product | null>;
 
