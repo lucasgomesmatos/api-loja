@@ -1,6 +1,6 @@
 import { UsersStoreRepository } from "@/repositories/users-store-repository";
 import { User } from "@prisma/client";
-import { InvalidCredentialsError } from "./erros/invalid-credentials-error";
+import { InvalidCredentialsError } from "../erros/invalid-credentials-error";
 
 interface AuthenticateUseCaseRequest {
   email: string;

@@ -1,7 +1,7 @@
 import { UsersRepository } from "@/repositories/users-repository";
 import { User } from "@prisma/client";
 import { compare } from "bcryptjs";
-import { InvalidCredentialsError } from "./erros/invalid-credentials-error";
+import { InvalidCredentialsError } from "../erros/invalid-credentials-error";
 
 interface AuthenticateUseCaseRequest {
   email: string;
