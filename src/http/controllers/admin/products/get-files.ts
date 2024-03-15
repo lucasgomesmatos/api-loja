@@ -15,11 +15,14 @@ export async function getAllFilesByProductId(
   try {
     const getAllFilesUseCase = makeGetFilesUseCase();
 
-    const { files } = await getAllFilesUseCase.execute({
+    const { files, categories } = await getAllFilesUseCase.execute({
       productId,
     });
 
-    return reply.send(files);
+    return reply.send({
+      files,
+      categories,
+    });
   } catch (error) {
     return reply.status(500).send({ message: "Internal server error" });
   }

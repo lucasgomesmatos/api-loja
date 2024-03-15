@@ -4,11 +4,12 @@ import { ProductsRepository } from "./../repositories/products-repository";
 interface GetAllProductsUseCaseRequest {
   query: string;
   page: number;
-  categories: string[];
+  categories: string[] | undefined;
 }
 
 interface GetAllProductsUseCaseResponse {
   products: Product[];
+  total: number;
 }
 
 export class GetAllProductsUseCase {
@@ -19,7 +20,7 @@ export class GetAllProductsUseCase {
     query,
     categories,
   }: GetAllProductsUseCaseRequest): Promise<GetAllProductsUseCaseResponse> {
-    const products = await this.productsRepository.findAllProducts({
+    const { products, total } = await this.productsRepository.findAllProducts({
       page,
       query,
       categories,
@@ -27,6 +28,7 @@ export class GetAllProductsUseCase {
 
     return {
       products,
+      total,
     };
   }
 }

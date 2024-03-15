@@ -1,8 +1,10 @@
 import { environment } from "@/env/env";
 import { s3 } from "@/lib/aws-s3";
 import { FilesRepository } from "@/repositories/files-repository";
+import { ProductsRepository } from "@/repositories/products-repository";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { Category } from "@prisma/client";
 
 interface GetFilesUseCaseRequest {
   productId: string;
@@ -18,15 +20,21 @@ interface FileContent {
 
 interface GetFilesUseCaseResponse {
   files: FileContent[];
+  categories: Category[];
 }
 
 export class GetFilesUseCase {
-  constructor(private readonly filesRepository: FilesRepository) {}
+  constructor(
+    private readonly filesRepository: FilesRepository,
+    private readonly productsRepository: ProductsRepository,
+  ) {}
 
   async execute({
     productId,
   }: GetFilesUseCaseRequest): Promise<GetFilesUseCaseResponse> {
     const files = await this.filesRepository.getAllFilesByProductId(productId);
+    const categories =
+      await this.productsRepository.getCategoryByProductId(productId);
 
     const content: FileContent[] = [];
 
@@ -49,6 +57,7 @@ export class GetFilesUseCase {
 
     return {
       files: content,
+      categories,
     };
   }
 }

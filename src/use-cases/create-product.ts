@@ -35,6 +35,14 @@ export class CreateProductUseCase {
 
     let product = await this.productsRepository.findByName(nameProduct);
 
+    if (product) {
+      await this.productsRepository.updateById(product.id, {
+        name: nameProduct,
+        idWoocommerce,
+        categories,
+      });
+    }
+
     if (!product) {
       product = await this.productsRepository.create({
         name: nameProduct,

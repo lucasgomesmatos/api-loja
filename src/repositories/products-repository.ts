@@ -1,4 +1,4 @@
-import { Product } from "@prisma/client";
+import { Category, Product } from "@prisma/client";
 
 export interface FindAllProductsParams {
   query: string;
@@ -21,5 +21,12 @@ export interface ProductsRepository {
 
   deleteById(id: string): Promise<void>;
 
-  findAllProducts(data: FindAllProductsParams): Promise<Product[]>;
+  findAllProducts(data: FindAllProductsParams): Promise<{
+    products: Product[];
+    total: number;
+  }>;
+
+  updateById(id: string, data: CreateProduct): Promise<Product>;
+
+  getCategoryByProductId(productId: string): Promise<Category[]>;
 }

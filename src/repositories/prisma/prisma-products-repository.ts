@@ -7,8 +7,28 @@ import {
 
 export class PrismaProductsRepository implements ProductsRepository {
   async findAllProducts({ query, page, categories }: FindAllProductsParams) {
-    if (categories) {
-      return await prisma.product.findMany({
+    if (!categories) {
+      const [products, total] = await prisma.$transaction([
+        prisma.product.findMany({
+          where: {
+            name: {
+              contains: query,
+            },
+          },
+          skip: (page - 1) * 16,
+          take: 16,
+        }),
+        prisma.product.count(),
+      ]);
+
+      return {
+        products,
+        total,
+      };
+    }
+
+    const [products, total] = await prisma.$transaction([
+      prisma.product.findMany({
         where: {
           name: {
             contains: query,
@@ -24,18 +44,14 @@ export class PrismaProductsRepository implements ProductsRepository {
 
         skip: (page - 1) * 16,
         take: 16,
-      });
-    }
+      }),
+      prisma.product.count(),
+    ]);
 
-    return await prisma.product.findMany({
-      where: {
-        name: {
-          contains: query,
-        },
-      },
-      skip: (page - 1) * 16,
-      take: 16,
-    });
+    return {
+      products,
+      total,
+    };
   }
 
   async create(data: CreateProduct) {
@@ -77,10 +93,60 @@ export class PrismaProductsRepository implements ProductsRepository {
   }
 
   async deleteById(id: string) {
-    await prisma.product.delete({
+    await prisma.$transaction([
+      prisma.productsOnCategories.deleteMany({
+        where: {
+          productId: id,
+        },
+      }),
+
+      prisma.product.delete({
+        where: {
+          id,
+        },
+      }),
+    ]);
+  }
+
+  async getCategoryByProductId(productId: string) {
+    const categoriesAll = await prisma.productsOnCategories.findMany({
+      where: {
+        productId,
+      },
+      select: {
+        category: true,
+      },
+    });
+
+    const categories = categoriesAll.map((item) => item.category);
+
+    return categories;
+  }
+
+  async updateById(id: string, data: CreateProduct) {
+    const product = await prisma.product.update({
       where: {
         id,
       },
+      data: {
+        idWoocommerce: data.idWoocommerce,
+        name: data.name,
+      },
     });
+
+    await prisma.productsOnCategories.deleteMany({
+      where: {
+        productId: product.id,
+      },
+    });
+
+    await prisma.productsOnCategories.createMany({
+      data: data.categories.map((categoryId) => ({
+        productId: product.id,
+        categoryId,
+      })),
+    });
+
+    return product;
   }
 }

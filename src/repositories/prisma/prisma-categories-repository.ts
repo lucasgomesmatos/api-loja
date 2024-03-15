@@ -36,11 +36,18 @@ export class PrismaCategoriesRepository implements CategoriesRepository {
   }
 
   async deleteById(id: string) {
-    await prisma.category.delete({
-      where: {
-        id,
-      },
-    });
+    await prisma.$transaction([
+      prisma.productsOnCategories.deleteMany({
+        where: {
+          categoryId: id,
+        },
+      }),
+      prisma.category.delete({
+        where: {
+          id,
+        },
+      }),
+    ]);
   }
 
   async update(categoryId: string, name: string) {

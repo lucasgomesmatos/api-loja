@@ -19,13 +19,16 @@ export async function getAllProducts(
   try {
     const getAllProductsUseCase = makeGetAllProductsUseCase();
 
-    const { products } = await getAllProductsUseCase.execute({
+    const { products, total } = await getAllProductsUseCase.execute({
       page,
       query,
       categories: categoriesArray,
     });
 
-    return reply.send(products);
+    return reply.send({
+      products,
+      total,
+    });
   } catch (error) {
     return reply.status(500).send({ message: "Internal server error" });
   }
