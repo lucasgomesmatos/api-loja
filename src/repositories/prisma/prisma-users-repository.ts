@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
-import { UsersRepository } from "../users-repository";
+import { GetAllUsers, UsersRepository } from "../users-repository";
 
 export class PrismaUsersRepository implements UsersRepository {
   async findById(id: string) {
@@ -43,10 +43,34 @@ export class PrismaUsersRepository implements UsersRepository {
     return user;
   }
 
-  async findAllUsers() {
-    const users = await prisma.user.findMany();
+  async findAllUsers(data: GetAllUsers) {
+    const [users, total] = await prisma.$transaction([
+      prisma.user.findMany({
+        where: {
+          OR: [
+            {
+              name: {
+                contains: data.query,
+              },
+            },
+            {
+              email: {
+                contains: data.query,
+              },
+            },
+          ],
+        },
+        take: data.page ? 16 : undefined,
+        skip: data.page ? (data.page - 1) * 16 : 0,
+      }),
 
-    return users;
+      prisma.user.count(),
+    ]);
+
+    return {
+      users,
+      total,
+    };
   }
 
   async update(id: string, { name, email }: Prisma.UserUpdateInput) {

@@ -33,6 +33,8 @@ export async function authenticate(
       },
     );
 
+    console.log(user);
+
     const refreshToken = await reply.jwtSign(
       {
         role: user.role,
