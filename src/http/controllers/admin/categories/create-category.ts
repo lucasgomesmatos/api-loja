@@ -6,8 +6,6 @@ export async function createCategory(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {
-  console.log(JSON.stringify(request.body));
-
   const categoryBodySchema = z.object({
     name: z.coerce.string(),
   });

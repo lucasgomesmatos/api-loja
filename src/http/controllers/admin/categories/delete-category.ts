@@ -6,8 +6,6 @@ export async function deleteCategory(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {
-  console.log(request.params);
-
   const categoryParamsSchema = z.object({
     categoryId: z.string(),
   });

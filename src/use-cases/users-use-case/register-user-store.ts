@@ -1,3 +1,4 @@
+import { Optional } from "@/@types/optional";
 import { OrdersRepository } from "@/repositories/orders-repository";
 import { UsersStoreRepository } from "@/repositories/users-store-repository";
 import { hash } from "bcryptjs";
@@ -59,7 +60,7 @@ export class RegisterUserStoreUseCase {
   }
 
   private async createOrder(
-    data: Omit<RegisterUseCaseRequest, "billing">,
+    data: Optional<RegisterUseCaseRequest, "billing">,
     userId: string,
   ) {
     const { id, status, lineItems } = data;

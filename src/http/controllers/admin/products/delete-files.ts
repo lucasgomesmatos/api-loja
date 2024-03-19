@@ -6,8 +6,6 @@ export async function deleteFiles(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {
-  console.log(JSON.stringify(request.body));
-
   const filesBodySchema = z.object({
     ids: z.array(z.coerce.number()),
   });
