@@ -149,4 +149,44 @@ export class PrismaProductsRepository implements ProductsRepository {
 
     return product;
   }
+
+  async getAllProductsById(productsIds: string[]) {
+    const products = await prisma.product.findMany({
+      where: {
+        id: {
+          in: productsIds,
+        },
+      },
+    });
+
+    return products;
+  }
+
+  async getAllProductsByIdWoocommerce(
+    page: number,
+    query: string,
+    productsIds: number[],
+  ) {
+    const [products, total] = await prisma.$transaction([
+      prisma.product.findMany({
+        where: {
+          idWoocommerce: {
+            in: productsIds,
+          },
+          name: {
+            contains: query,
+          },
+        },
+
+        skip: (page - 1) * 16,
+        take: 16,
+      }),
+      prisma.product.count(),
+    ]);
+
+    return {
+      products,
+      total,
+    };
+  }
 }

@@ -13,6 +13,7 @@ export const app = fastify();
 
 app.register(fastifyJwt, {
   secret: environment.JWT_SECRET,
+
   cookie: {
     cookieName: "refreshToken",
     signed: false,

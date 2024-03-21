@@ -1,3 +1,5 @@
+import { Order } from "@prisma/client";
+
 export interface OrderProps {
   id: number;
   status: string;
@@ -8,4 +10,6 @@ export interface OrderProps {
 
 export interface OrdersRepository {
   create(data: OrderProps): Promise<void>;
+
+  findByUserId(userId: string): Promise<Order[]>;
 }

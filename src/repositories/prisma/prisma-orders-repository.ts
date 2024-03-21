@@ -15,4 +15,14 @@ export class PrismaOrdersRepository implements OrdersRepository {
       },
     });
   }
+
+  async findByUserId(userId: string) {
+    const orders = await prisma.order.findMany({
+      where: {
+        userId,
+      },
+    });
+
+    return orders;
+  }
 }
