@@ -73,7 +73,10 @@ export class PrismaUsersRepository implements UsersRepository {
     };
   }
 
-  async update(id: string, { name, email }: Prisma.UserUpdateInput) {
+  async update(
+    id: string,
+    { name, email, phone, cpf }: Prisma.UserUpdateInput,
+  ) {
     await prisma.user.update({
       where: {
         id,
@@ -81,6 +84,8 @@ export class PrismaUsersRepository implements UsersRepository {
       data: {
         name,
         email,
+        phone,
+        cpf,
       },
     });
   }

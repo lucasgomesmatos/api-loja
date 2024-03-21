@@ -5,6 +5,8 @@ interface UpdateUserUseCaseRequest {
   userId: string;
   name: string;
   email: string;
+  phone: string;
+  cpf: string;
 }
 
 export class UpdateUserUseCase {
@@ -14,6 +16,8 @@ export class UpdateUserUseCase {
     userId,
     email,
     name,
+    phone,
+    cpf,
   }: UpdateUserUseCaseRequest): Promise<void> {
     const user = await this.usersRepository.findById(userId);
 
@@ -24,6 +28,8 @@ export class UpdateUserUseCase {
     await this.usersRepository.update(userId, {
       email,
       name,
+      phone,
+      cpf,
     });
   }
 }

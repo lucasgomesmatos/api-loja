@@ -52,6 +52,7 @@ export async function authenticateUserStore(
       })
       .status(200)
       .send({
+        refreshToken,
         token,
       });
   } catch (error) {

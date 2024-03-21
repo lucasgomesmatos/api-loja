@@ -1,25 +1,30 @@
 import { UserAlreadyExistsError } from "@/use-cases/erros/user-already-exists-error";
-import { makeRegisterUseCase } from "@/use-cases/factories/make-register-user-use-case";
+import { makeUpdateUserUseCase } from "@/use-cases/factories/make-update-user-use-case";
 
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
 
-export async function register(request: FastifyRequest, reply: FastifyReply) {
-  const registerUserBodySchema = z.object({
+export async function updateUser(request: FastifyRequest, reply: FastifyReply) {
+  const updateUserBodySchema = z.object({
     name: z.string(),
     email: z.string().email(),
     cpf: z.string().length(14),
     phone: z.string().length(15),
   });
 
-  const { name, email, cpf, phone } = registerUserBodySchema.parse(
-    request.body,
-  );
+  const updateUserParamsSchema = z.object({
+    userId: z.string().uuid(),
+  });
+
+  const { name, email, cpf, phone } = updateUserBodySchema.parse(request.body);
+
+  const { userId } = updateUserParamsSchema.parse(request.params);
 
   try {
-    const registerUserUseCase = makeRegisterUseCase();
+    const updateUserUseCase = makeUpdateUserUseCase();
 
-    await registerUserUseCase.execute({
+    await updateUserUseCase.execute({
+      userId,
       name,
       email,
       cpf,

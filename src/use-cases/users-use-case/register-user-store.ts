@@ -1,6 +1,6 @@
 import { Optional } from "@/@types/optional";
 import { OrdersRepository } from "@/repositories/orders-repository";
-import { UsersStoreRepository } from "@/repositories/users-store-repository";
+import { UsersRepository } from "@/repositories/users-repository";
 import { hash } from "bcryptjs";
 
 interface BillingProps {
@@ -27,7 +27,7 @@ interface RegisterUseCaseRequest {
 
 export class RegisterUserStoreUseCase {
   constructor(
-    private usersStoreRepository: UsersStoreRepository,
+    private usersRepository: UsersRepository,
     private ordersRepository: OrdersRepository,
   ) {}
 
@@ -37,7 +37,7 @@ export class RegisterUserStoreUseCase {
     billing,
     lineItems,
   }: RegisterUseCaseRequest): Promise<void> {
-    const userEmailExists = await this.usersStoreRepository.findByEmail(
+    const userEmailExists = await this.usersRepository.findByEmail(
       billing.email,
     );
 
@@ -48,7 +48,7 @@ export class RegisterUserStoreUseCase {
 
     const passwordHash = await hash(billing.cpf!, 6);
 
-    const user = await this.usersStoreRepository.create({
+    const user = await this.usersRepository.create({
       name: billing.firstName.concat(" ", billing.lastName),
       email: billing.email,
       password_hash: passwordHash,

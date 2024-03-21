@@ -29,6 +29,7 @@ export class GetAllUsersUseCase {
         name: user.name,
         email: user.email,
         cpf: user.cpf,
+        phone: user.phone,
       };
     });
 
