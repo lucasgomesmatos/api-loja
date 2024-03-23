@@ -61,7 +61,12 @@ if (process.env.NODE_ENV === "test") {
 var envSchema = import_zod.z.object({
   NODE_ENV: import_zod.z.enum(["development", "test", "production"]).default("development"),
   PORT: import_zod.z.coerce.number().default(3333),
-  JWT_SECRET: import_zod.z.string()
+  JWT_SECRET: import_zod.z.string(),
+  AWS_BASE_URL: import_zod.z.string(),
+  AWS_BUCKET_NAME: import_zod.z.string(),
+  AWS_DEFAULT_REGION: import_zod.z.string(),
+  AWS_SECRET_ACCESS_KEY: import_zod.z.string(),
+  AWS_ACCESS_KEY_ID: import_zod.z.string()
 });
 var env = envSchema.safeParse(process.env);
 if (!env.success) {
@@ -112,9 +117,49 @@ var PrismaUsersRepository = class {
     });
     return user;
   }
+  async findAllUsers(data) {
+    const [users, total] = await prisma.$transaction([
+      prisma.user.findMany({
+        where: {
+          OR: [
+            {
+              name: {
+                contains: data.query
+              }
+            },
+            {
+              email: {
+                contains: data.query
+              }
+            }
+          ]
+        },
+        take: data.page ? 16 : void 0,
+        skip: data.page ? (data.page - 1) * 16 : 0
+      }),
+      prisma.user.count()
+    ]);
+    return {
+      users,
+      total
+    };
+  }
+  async update(id, { name, email, phone, cpf }) {
+    await prisma.user.update({
+      where: {
+        id
+      },
+      data: {
+        name,
+        email,
+        phone,
+        cpf
+      }
+    });
+  }
 };
 
-// src/use-cases/authenticate.ts
+// src/use-cases/users-use-case/authenticate.ts
 var import_bcryptjs = require("bcryptjs");
 var AuthenticateUseCase = class {
   constructor(usersRepository) {
@@ -186,6 +231,7 @@ async function authenticate(request, reply) {
       secure: true,
       sameSite: true
     }).status(200).send({
+      refreshToken,
       token
     });
   } catch (error) {
@@ -198,6 +244,58 @@ async function authenticate(request, reply) {
   }
 }
 
+// src/use-cases/users-use-case/get-all-users.ts
+var GetAllUsersUseCase = class {
+  constructor(usersRepository) {
+    this.usersRepository = usersRepository;
+  }
+  async execute({
+    page,
+    query
+  }) {
+    const { users, total } = await this.usersRepository.findAllUsers({
+      page,
+      query
+    });
+    const usersPartial = users.map((user) => {
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        cpf: user.cpf,
+        phone: user.phone
+      };
+    });
+    return {
+      users: usersPartial,
+      total
+    };
+  }
+};
+
+// src/use-cases/factories/make-get-all-users-use-case.ts
+function makeGetAllUsersUseCase() {
+  const prismaUsersRepository = new PrismaUsersRepository();
+  const getUserProfileUseCase = new GetAllUsersUseCase(prismaUsersRepository);
+  return getUserProfileUseCase;
+}
+
+// src/http/controllers/admin/users/get-all-users.ts
+var import_zod3 = require("zod");
+async function getAllUsers(request, reply) {
+  const UsersParamsSchema = import_zod3.z.object({
+    page: import_zod3.z.coerce.number().min(1).default(1),
+    query: import_zod3.z.string().default("")
+  });
+  const { query, page } = UsersParamsSchema.parse(request.query);
+  const getAllUsers2 = makeGetAllUsersUseCase();
+  const { users, total } = await getAllUsers2.execute({
+    page,
+    query
+  });
+  return reply.status(200).send({ users, total });
+}
+
 // src/use-cases/erros/resource-not-found-error.ts
 var ResourceNotFoundError = class extends Error {
   constructor() {
@@ -205,7 +303,7 @@ var ResourceNotFoundError = class extends Error {
   }
 };
 
-// src/use-cases/get-user-profile.ts
+// src/use-cases/users-use-case/get-user-profile.ts
 var GetUserProfileUseCase = class {
   constructor(usersRepository) {
     this.usersRepository = usersRepository;
@@ -284,7 +382,7 @@ var UserAlreadyExistsError = class extends Error {
   }
 };
 
-// src/use-cases/register-user.ts
+// src/use-cases/users-use-case/register-user.ts
 var import_bcryptjs2 = require("bcryptjs");
 var RegisterUserUseCase = class {
   constructor(usersRepository) {
@@ -293,14 +391,13 @@ var RegisterUserUseCase = class {
   async execute({
     name,
     email,
-    password,
     cpf,
     phone
   }) {
     const userWithEmailAlreadyExists = await this.usersRepository.findByEmail(email);
     if (userWithEmailAlreadyExists)
       throw new UserAlreadyExistsError();
-    const passwordHash = await (0, import_bcryptjs2.hash)(password, 6);
+    const passwordHash = await (0, import_bcryptjs2.hash)(cpf, 6);
     const user = await this.usersRepository.create({
       name,
       email,
@@ -322,16 +419,15 @@ function makeRegisterUseCase() {
 }
 
 // src/http/controllers/admin/users/register.ts
-var import_zod3 = require("zod");
+var import_zod4 = require("zod");
 async function register(request, reply) {
-  const registerUserBodySchema = import_zod3.z.object({
-    name: import_zod3.z.string(),
-    email: import_zod3.z.string().email(),
-    password: import_zod3.z.string().min(6),
-    cpf: import_zod3.z.string().optional(),
-    phone: import_zod3.z.string().optional()
+  const registerUserBodySchema = import_zod4.z.object({
+    name: import_zod4.z.string(),
+    email: import_zod4.z.string().email(),
+    cpf: import_zod4.z.string().length(14),
+    phone: import_zod4.z.string().length(15)
   });
-  const { name, email, password, cpf, phone } = registerUserBodySchema.parse(
+  const { name, email, cpf, phone } = registerUserBodySchema.parse(
     request.body
   );
   try {
@@ -339,7 +435,72 @@ async function register(request, reply) {
     await registerUserUseCase.execute({
       name,
       email,
-      password,
+      cpf,
+      phone
+    });
+  } catch (error) {
+    if (error instanceof UserAlreadyExistsError) {
+      return reply.status(422).send({
+        message: error.message
+      });
+    }
+    throw error;
+  }
+  return reply.status(201).send();
+}
+
+// src/use-cases/users-use-case/update-user.ts
+var UpdateUserUseCase = class {
+  constructor(usersRepository) {
+    this.usersRepository = usersRepository;
+  }
+  async execute({
+    userId,
+    email,
+    name,
+    phone,
+    cpf
+  }) {
+    const user = await this.usersRepository.findById(userId);
+    if (!user) {
+      throw new ResourceNotFoundError();
+    }
+    await this.usersRepository.update(userId, {
+      email,
+      name,
+      phone,
+      cpf
+    });
+  }
+};
+
+// src/use-cases/factories/make-update-user-use-case.ts
+function makeUpdateUserUseCase() {
+  const prismaUsersRepository = new PrismaUsersRepository();
+  const getUserProfileUseCase = new UpdateUserUseCase(prismaUsersRepository);
+  return getUserProfileUseCase;
+}
+
+// src/http/controllers/admin/users/update.ts
+var import_zod5 = require("zod");
+async function updateUser(request, reply) {
+  const updateUserBodySchema = import_zod5.z.object({
+    name: import_zod5.z.string(),
+    email: import_zod5.z.string().email(),
+    cpf: import_zod5.z.string().length(14),
+    phone: import_zod5.z.string().length(15)
+  });
+  const updateUserParamsSchema = import_zod5.z.object({
+    userId: import_zod5.z.string().uuid()
+  });
+  const { name, email, cpf, phone } = updateUserBodySchema.parse(request.body);
+  const { userId } = updateUserParamsSchema.parse(request.params);
+  try {
+    const updateUserUseCase = makeUpdateUserUseCase();
+    await updateUserUseCase.execute({
+      userId,
+      name,
+      email,
       cpf,
       phone
     });
@@ -356,10 +517,24 @@ async function register(request, reply) {
 
 // src/http/controllers/admin/users/routes.ts
 async function usersRoutes(app) {
-  app.post("/users", { onRequest: [verifyUserRole("ADMIN")] }, register);
   app.post("/sessions", authenticate);
   app.patch("/token/refresh", refresh);
   app.get("/me", { onRequest: [verifyJwt] }, profile);
+  app.get(
+    "/users",
+    { onRequest: [verifyJwt, verifyUserRole("ADMIN")] },
+    getAllUsers
+  );
+  app.post(
+    "/users",
+    { onRequest: [verifyJwt, verifyUserRole("ADMIN")] },
+    register
+  );
+  app.put(
+    "/users/:userId",
+    { onRequest: [verifyJwt, verifyUserRole("ADMIN")] },
+    updateUser
+  );
 }
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {

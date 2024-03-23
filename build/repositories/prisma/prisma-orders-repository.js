@@ -35,7 +35,12 @@ if (process.env.NODE_ENV === "test") {
 var envSchema = import_zod.z.object({
   NODE_ENV: import_zod.z.enum(["development", "test", "production"]).default("development"),
   PORT: import_zod.z.coerce.number().default(3333),
-  JWT_SECRET: import_zod.z.string()
+  JWT_SECRET: import_zod.z.string(),
+  AWS_BASE_URL: import_zod.z.string(),
+  AWS_BUCKET_NAME: import_zod.z.string(),
+  AWS_DEFAULT_REGION: import_zod.z.string(),
+  AWS_SECRET_ACCESS_KEY: import_zod.z.string(),
+  AWS_ACCESS_KEY_ID: import_zod.z.string()
 });
 var env = envSchema.safeParse(process.env);
 if (!env.success) {
@@ -53,15 +58,24 @@ var prisma = new import_client.PrismaClient({
 // src/repositories/prisma/prisma-orders-repository.ts
 var PrismaOrdersRepository = class {
   async create(data) {
+    const { id, status, userId, productsIds, json } = data;
     await prisma.order.create({
       data: {
-        status: data.status,
-        id: data.id,
-        userId: data.user_id,
-        products_ids: data.products,
-        json: data.json
+        id,
+        status,
+        userId,
+        productsIds,
+        json
       }
     });
+  }
+  async findByUserId(userId) {
+    const orders = await prisma.order.findMany({
+      where: {
+        userId
+      }
+    });
+    return orders;
   }
 };
 // Annotate the CommonJS export names for ESM import in node:

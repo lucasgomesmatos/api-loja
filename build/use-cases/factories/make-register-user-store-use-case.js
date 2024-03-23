@@ -35,7 +35,12 @@ if (process.env.NODE_ENV === "test") {
 var envSchema = import_zod.z.object({
   NODE_ENV: import_zod.z.enum(["development", "test", "production"]).default("development"),
   PORT: import_zod.z.coerce.number().default(3333),
-  JWT_SECRET: import_zod.z.string()
+  JWT_SECRET: import_zod.z.string(),
+  AWS_BASE_URL: import_zod.z.string(),
+  AWS_BUCKET_NAME: import_zod.z.string(),
+  AWS_DEFAULT_REGION: import_zod.z.string(),
+  AWS_SECRET_ACCESS_KEY: import_zod.z.string(),
+  AWS_ACCESS_KEY_ID: import_zod.z.string()
 });
 var env = envSchema.safeParse(process.env);
 if (!env.success) {
@@ -53,20 +58,29 @@ var prisma = new import_client.PrismaClient({
 // src/repositories/prisma/prisma-orders-repository.ts
 var PrismaOrdersRepository = class {
   async create(data) {
+    const { id, status, userId, productsIds, json } = data;
     await prisma.order.create({
       data: {
-        status: data.status,
-        id: data.id,
-        userId: data.user_id,
-        products_ids: data.products,
-        json: data.json
+        id,
+        status,
+        userId,
+        productsIds,
+        json
       }
     });
   }
+  async findByUserId(userId) {
+    const orders = await prisma.order.findMany({
+      where: {
+        userId
+      }
+    });
+    return orders;
+  }
 };
 
-// src/repositories/prisma/prisma-users-store-repository.ts
-var PrismaUsersStoreRepository = class {
+// src/repositories/prisma/prisma-users-repository.ts
+var PrismaUsersRepository = class {
   async findById(id) {
     const user = await prisma.user.findUnique({
       where: {
@@ -101,46 +115,86 @@ var PrismaUsersStoreRepository = class {
     });
     return user;
   }
+  async findAllUsers(data) {
+    const [users, total] = await prisma.$transaction([
+      prisma.user.findMany({
+        where: {
+          OR: [
+            {
+              name: {
+                contains: data.query
+              }
+            },
+            {
+              email: {
+                contains: data.query
+              }
+            }
+          ]
+        },
+        take: data.page ? 16 : void 0,
+        skip: data.page ? (data.page - 1) * 16 : 0
+      }),
+      prisma.user.count()
+    ]);
+    return {
+      users,
+      total
+    };
+  }
+  async update(id, { name, email, phone, cpf }) {
+    await prisma.user.update({
+      where: {
+        id
+      },
+      data: {
+        name,
+        email,
+        phone,
+        cpf
+      }
+    });
+  }
 };
 
-// src/use-cases/register-user-store.ts
+// src/use-cases/users-use-case/register-user-store.ts
 var import_bcryptjs = require("bcryptjs");
 var RegisterUserStoreUseCase = class {
-  constructor(usersStoreRepository, ordersRepository) {
-    this.usersStoreRepository = usersStoreRepository;
+  constructor(usersRepository, ordersRepository) {
+    this.usersRepository = usersRepository;
     this.ordersRepository = ordersRepository;
   }
   async execute({
     id,
     status,
     billing,
-    line_items
+    lineItems
   }) {
-    const userEmailExists = await this.usersStoreRepository.findByEmail(
+    const userEmailExists = await this.usersRepository.findByEmail(
       billing.email
     );
     if (userEmailExists) {
-      this.createOrder({ id, status, line_items }, userEmailExists.id);
+      this.createOrder({ id, status, lineItems }, userEmailExists.id);
       return;
     }
     const passwordHash = await (0, import_bcryptjs.hash)(billing.cpf, 6);
-    const user = await this.usersStoreRepository.create({
-      name: billing.first_name.concat(" ", billing.last_name),
+    const user = await this.usersRepository.create({
+      name: billing.firstName.concat(" ", billing.lastName),
       email: billing.email,
       password_hash: passwordHash,
       phone: billing.phone,
       cpf: billing.cpf
     });
-    this.createOrder({ id, status, line_items }, user.id);
+    this.createOrder({ id, status, lineItems }, user.id);
   }
   async createOrder(data, userId) {
-    const { id, status, line_items } = data;
-    const productsIds = line_items.map((item) => item.product_id);
+    const { id, status, lineItems } = data;
+    const productsIds = lineItems.map((item) => item.productId).join(",");
     this.ordersRepository.create({
       id,
       status,
-      user_id: userId,
-      products: productsIds,
+      userId,
+      productsIds,
       json: JSON.stringify({
         data,
         userId
@@ -151,7 +205,7 @@ var RegisterUserStoreUseCase = class {
 
 // src/use-cases/factories/make-register-user-store-use-case.ts
 function makeRegisterUserStoreUseCase() {
-  const prismaUsersStoreRepository = new PrismaUsersStoreRepository();
+  const prismaUsersStoreRepository = new PrismaUsersRepository();
   const prismaOrdersRepository = new PrismaOrdersRepository();
   const registerUserUseCase = new RegisterUserStoreUseCase(
     prismaUsersStoreRepository,

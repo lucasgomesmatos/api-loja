@@ -35,7 +35,12 @@ if (process.env.NODE_ENV === "test") {
 var envSchema = import_zod.z.object({
   NODE_ENV: import_zod.z.enum(["development", "test", "production"]).default("development"),
   PORT: import_zod.z.coerce.number().default(3333),
-  JWT_SECRET: import_zod.z.string()
+  JWT_SECRET: import_zod.z.string(),
+  AWS_BASE_URL: import_zod.z.string(),
+  AWS_BUCKET_NAME: import_zod.z.string(),
+  AWS_DEFAULT_REGION: import_zod.z.string(),
+  AWS_SECRET_ACCESS_KEY: import_zod.z.string(),
+  AWS_ACCESS_KEY_ID: import_zod.z.string()
 });
 var env = envSchema.safeParse(process.env);
 if (!env.success) {
@@ -86,9 +91,49 @@ var PrismaUsersRepository = class {
     });
     return user;
   }
+  async findAllUsers(data) {
+    const [users, total] = await prisma.$transaction([
+      prisma.user.findMany({
+        where: {
+          OR: [
+            {
+              name: {
+                contains: data.query
+              }
+            },
+            {
+              email: {
+                contains: data.query
+              }
+            }
+          ]
+        },
+        take: data.page ? 16 : void 0,
+        skip: data.page ? (data.page - 1) * 16 : 0
+      }),
+      prisma.user.count()
+    ]);
+    return {
+      users,
+      total
+    };
+  }
+  async update(id, { name, email, phone, cpf }) {
+    await prisma.user.update({
+      where: {
+        id
+      },
+      data: {
+        name,
+        email,
+        phone,
+        cpf
+      }
+    });
+  }
 };
 
-// src/use-cases/authenticate.ts
+// src/use-cases/users-use-case/authenticate.ts
 var import_bcryptjs = require("bcryptjs");
 
 // src/use-cases/erros/invalid-credentials-error.ts
@@ -98,7 +143,7 @@ var InvalidCredentialsError = class extends Error {
   }
 };
 
-// src/use-cases/authenticate.ts
+// src/use-cases/users-use-case/authenticate.ts
 var AuthenticateUseCase = class {
   constructor(usersRepository) {
     this.usersRepository = usersRepository;

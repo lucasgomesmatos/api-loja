@@ -35,7 +35,12 @@ if (process.env.NODE_ENV === "test") {
 var envSchema = import_zod.z.object({
   NODE_ENV: import_zod.z.enum(["development", "test", "production"]).default("development"),
   PORT: import_zod.z.coerce.number().default(3333),
-  JWT_SECRET: import_zod.z.string()
+  JWT_SECRET: import_zod.z.string(),
+  AWS_BASE_URL: import_zod.z.string(),
+  AWS_BUCKET_NAME: import_zod.z.string(),
+  AWS_DEFAULT_REGION: import_zod.z.string(),
+  AWS_SECRET_ACCESS_KEY: import_zod.z.string(),
+  AWS_ACCESS_KEY_ID: import_zod.z.string()
 });
 var env = envSchema.safeParse(process.env);
 if (!env.success) {
@@ -52,15 +57,159 @@ var prisma = new import_client.PrismaClient({
 
 // src/repositories/prisma/prisma-products-repository.ts
 var PrismaProductsRepository = class {
-  async findAll(ids) {
+  async findAllProducts({ query, page, categories }) {
+    if (!categories) {
+      const [products2, total2] = await prisma.$transaction([
+        prisma.product.findMany({
+          where: {
+            name: {
+              contains: query
+            }
+          },
+          skip: (page - 1) * 16,
+          take: 16
+        }),
+        prisma.product.count()
+      ]);
+      return {
+        products: products2,
+        total: total2
+      };
+    }
+    const [products, total] = await prisma.$transaction([
+      prisma.product.findMany({
+        where: {
+          name: {
+            contains: query
+          },
+          products: {
+            some: {
+              categoryId: {
+                in: categories
+              }
+            }
+          }
+        },
+        skip: (page - 1) * 16,
+        take: 16
+      }),
+      prisma.product.count()
+    ]);
+    return {
+      products,
+      total
+    };
+  }
+  async create(data) {
+    const product = await prisma.product.create({
+      data: {
+        idWoocommerce: data.idWoocommerce,
+        name: data.name
+      }
+    });
+    await prisma.productsOnCategories.createMany({
+      data: data.categories.map((categoryId) => ({
+        productId: product.id,
+        categoryId
+      }))
+    });
+    return product;
+  }
+  async findByName(name) {
+    const product = await prisma.product.findUnique({
+      where: {
+        name
+      }
+    });
+    return product;
+  }
+  async findById(id) {
+    const product = await prisma.product.findUnique({
+      where: {
+        id
+      }
+    });
+    return product;
+  }
+  async deleteById(id) {
+    await prisma.$transaction([
+      prisma.productsOnCategories.deleteMany({
+        where: {
+          productId: id
+        }
+      }),
+      prisma.product.delete({
+        where: {
+          id
+        }
+      })
+    ]);
+  }
+  async getCategoryByProductId(productId) {
+    const categoriesAll = await prisma.productsOnCategories.findMany({
+      where: {
+        productId
+      },
+      select: {
+        category: true
+      }
+    });
+    const categories = categoriesAll.map((item) => item.category);
+    return categories;
+  }
+  async updateById(id, data) {
+    const product = await prisma.product.update({
+      where: {
+        id
+      },
+      data: {
+        idWoocommerce: data.idWoocommerce,
+        name: data.name
+      }
+    });
+    await prisma.productsOnCategories.deleteMany({
+      where: {
+        productId: product.id
+      }
+    });
+    await prisma.productsOnCategories.createMany({
+      data: data.categories.map((categoryId) => ({
+        productId: product.id,
+        categoryId
+      }))
+    });
+    return product;
+  }
+  async getAllProductsById(productsIds) {
     const products = await prisma.product.findMany({
       where: {
-        id_woocommerce: {
-          in: ids
+        id: {
+          in: productsIds
         }
       }
     });
     return products;
+  }
+  async getAllProductsByIdWoocommerce(page, query, productsIds) {
+    const [products, total] = await prisma.$transaction([
+      prisma.product.findMany({
+        where: {
+          idWoocommerce: {
+            in: productsIds
+          },
+          name: {
+            contains: query
+          }
+        },
+        skip: (page - 1) * 16,
+        take: 16
+      }),
+      prisma.product.count()
+    ]);
+    return {
+      products,
+      total
+    };
   }
 };
 // Annotate the CommonJS export names for ESM import in node:
