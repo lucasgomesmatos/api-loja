@@ -21,7 +21,7 @@ CREATE TABLE `tb_orders` (
     `updatedAt` DATETIME(3) NOT NULL,
     `status` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NULL,
-    `productsIds` JSON NOT NULL,
+    `productsIds` VARCHAR(191) NOT NULL,
     `json` JSON NULL,
 
     PRIMARY KEY (`id`)

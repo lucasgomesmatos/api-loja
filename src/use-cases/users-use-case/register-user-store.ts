@@ -1,4 +1,5 @@
 import { Optional } from "@/@types/optional";
+import { sendMail } from "@/mail/nodemailer";
 import { OrdersRepository } from "@/repositories/orders-repository";
 import { UsersRepository } from "@/repositories/users-repository";
 import { hash } from "bcryptjs";
@@ -43,6 +44,7 @@ export class RegisterUserStoreUseCase {
 
     if (userEmailExists) {
       this.createOrder({ id, status, lineItems }, userEmailExists.id);
+      await sendMail();
       return;
     }
 
@@ -57,6 +59,7 @@ export class RegisterUserStoreUseCase {
     });
 
     this.createOrder({ id, status, lineItems }, user.id);
+    await sendMail();
   }
 
   private async createOrder(
