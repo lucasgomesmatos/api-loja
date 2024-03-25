@@ -1,28 +1,29 @@
+import { environment } from "@/env/env";
 import { render } from "@react-email/render";
 import nodemailer from "nodemailer";
 import AccessUserEmail from "./templates/access-user-email";
 
 export const transport = nodemailer.createTransport({
-  host: "sandbox.smtp.mailtrap.io",
-  port: 2525,
+  host: environment.EMAIL_HOST,
+  port: environment.EMAIL_PORT,
   auth: {
-    user: "24664fab081ec4",
-    pass: "a781847796141e",
+    user: environment.EMAIL_USER,
+    pass: environment.EMAIL_PASSWORD,
   },
 });
 
-export async function sendMail() {
+export async function sendMail(name?: string, email?: string, token?: string) {
   const emailHtml = render(
     AccessUserEmail({
-      name: "Ana Mesquita",
-      url: "https://admin.profbiodicas.com.br/auth/sign-in-member",
+      name,
+      url: `${environment.FRONT_URL}/api/auth-token?token=${token}`,
     }),
   );
 
   const options = {
     from: "naoresponda@profbiodicas.com.br",
-    to: "user@gmail.com",
-    subject: "[PROFBIODICAS] Confirmação de cadastro",
+    to: email,
+    subject: "[PROFBIO.DICAS] Baixe seus arquivos!",
     html: emailHtml,
   };
 

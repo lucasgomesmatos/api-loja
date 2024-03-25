@@ -18,6 +18,12 @@ const envSchema = z.object({
   AWS_DEFAULT_REGION: z.string(),
   AWS_SECRET_ACCESS_KEY: z.string(),
   AWS_ACCESS_KEY_ID: z.string(),
+  EMAIL_HOST: z.string(),
+  EMAIL_PORT: z.coerce.number(),
+  EMAIL_USER: z.string(),
+  EMAIL_PASSWORD: z.string(),
+
+  FRONT_URL: z.string().url(),
 });
 
 const env = envSchema.safeParse(process.env);

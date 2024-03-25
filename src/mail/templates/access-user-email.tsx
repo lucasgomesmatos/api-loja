@@ -13,14 +13,11 @@ import {
 import React from "react";
 
 interface AccessEmailProps {
-  name: string;
+  name?: string;
   url: string;
 }
 
-export default function AccessUserEmail({
-  name = "Ana Mesquita",
-  url = "https://loja.profbiodicas.com.br/wp-content/uploads/2024/03/arquivo.zip",
-}: AccessEmailProps) {
+export default function AccessUserEmail({ name, url }: AccessEmailProps) {
   return (
     <Html>
       <Head />

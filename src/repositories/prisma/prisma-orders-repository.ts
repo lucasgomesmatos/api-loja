@@ -25,4 +25,14 @@ export class PrismaOrdersRepository implements OrdersRepository {
 
     return orders;
   }
+
+  async findById(id: number) {
+    const order = await prisma.order.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    return order;
+  }
 }

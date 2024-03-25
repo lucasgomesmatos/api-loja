@@ -10,6 +10,7 @@ export interface OrderProps {
 
 export interface OrdersRepository {
   create(data: OrderProps): Promise<void>;
-
   findByUserId(userId: string): Promise<Order[]>;
+
+  findById(id: number): Promise<Order | null>;
 }

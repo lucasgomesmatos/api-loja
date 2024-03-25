@@ -1,10 +1,8 @@
-import { Optional } from "@/@types/optional";
-import { sendMail } from "@/mail/nodemailer";
-import { OrdersRepository } from "@/repositories/orders-repository";
 import { UsersRepository } from "@/repositories/users-repository";
+import { User } from "@prisma/client";
 import { hash } from "bcryptjs";
 
-interface BillingProps {
+interface RegisterUserStoreUseCaseRequest {
   email: string;
   firstName: string;
   lastName: string;
@@ -12,73 +10,38 @@ interface BillingProps {
   cpf?: string | undefined;
 }
 
-interface LineItemsProps {
-  id: number;
-  name: string;
-  productId: number;
-  price: number;
-}
-
-interface RegisterUseCaseRequest {
-  id: number;
-  status: "pending" | "completed" | "canceled";
-  billing: BillingProps;
-  lineItems: LineItemsProps[];
+interface RegisterUserStoreUseCaseResponse {
+  user: User | null;
 }
 
 export class RegisterUserStoreUseCase {
-  constructor(
-    private usersRepository: UsersRepository,
-    private ordersRepository: OrdersRepository,
-  ) {}
+  constructor(private usersRepository: UsersRepository) {}
 
   async execute({
-    id,
-    status,
-    billing,
-    lineItems,
-  }: RegisterUseCaseRequest): Promise<void> {
-    const userEmailExists = await this.usersRepository.findByEmail(
-      billing.email,
-    );
+    email,
+    firstName,
+    lastName,
+    cpf,
+    phone,
+  }: RegisterUserStoreUseCaseRequest): Promise<RegisterUserStoreUseCaseResponse> {
+    const userEmailExists = await this.usersRepository.findByEmail(email);
 
     if (userEmailExists) {
-      this.createOrder({ id, status, lineItems }, userEmailExists.id);
-      await sendMail();
-      return;
+      return {
+        user: userEmailExists,
+      };
     }
 
-    const passwordHash = await hash(billing.cpf!, 6);
+    const passwordHash = await hash(cpf!, 6);
 
     const user = await this.usersRepository.create({
-      name: billing.firstName.concat(" ", billing.lastName),
-      email: billing.email,
+      name: `${firstName} ${lastName}`,
+      email,
       password_hash: passwordHash,
-      phone: billing.phone,
-      cpf: billing.cpf,
+      phone,
+      cpf,
     });
 
-    this.createOrder({ id, status, lineItems }, user.id);
-    await sendMail();
-  }
-
-  private async createOrder(
-    data: Optional<RegisterUseCaseRequest, "billing">,
-    userId: string,
-  ) {
-    const { id, status, lineItems } = data;
-
-    const productsIds = lineItems.map((item) => item.productId).join(",");
-
-    this.ordersRepository.create({
-      id,
-      status,
-      userId,
-      productsIds,
-      json: JSON.stringify({
-        data,
-        userId,
-      }),
-    });
+    return { user };
   }
 }

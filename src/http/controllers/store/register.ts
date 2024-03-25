@@ -1,4 +1,6 @@
-import { UserAlreadyExistsError } from "@/use-cases/erros/user-already-exists-error";
+import { sendMail } from "@/mail/nodemailer";
+import { OrderAlreadyExistsError } from "@/use-cases/erros/order-already-exists-error";
+import { makeCreateOrderStoreUseCase } from "@/use-cases/factories/make-create-order-store-use-case";
 import { makeRegisterUserStoreUseCase } from "@/use-cases/factories/make-register-user-store-use-case";
 
 import { FastifyReply, FastifyRequest } from "fastify";
@@ -51,19 +53,36 @@ export async function registerUserStore(
 
   try {
     const registerUserStoreUseCase = makeRegisterUserStoreUseCase();
+    const createOrderStoreUseCase = makeCreateOrderStoreUseCase();
 
-    registerUserStoreUseCase.execute({
+    const { user } = await registerUserStoreUseCase.execute(billingParams);
+
+    await createOrderStoreUseCase.execute({
       id,
       status,
-      billing: billingParams,
       lineItems: lineItemsParams,
+      userId: user?.id as string,
     });
-  } catch (error) {
-    if (error instanceof UserAlreadyExistsError) {
-      return reply.status(422).send({
-        message: error.message,
-      });
+
+    const token = await reply.jwtSign(
+      {
+        role: user?.role,
+      },
+      {
+        sign: {
+          sub: user?.id,
+          expiresIn: "7d",
+        },
+      },
+    );
+
+    await sendMail(user?.name, user?.email, token);
+  } catch (error: unknown) {
+    if (error instanceof OrderAlreadyExistsError) {
+      console.error("Order already exists");
+      return reply.status(400).send({ message: "Order already exists" });
     }
+
     throw error;
   }
 
