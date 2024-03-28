@@ -1,4 +1,4 @@
-import { UsersStoreRepository } from "@/repositories/users-store-repository";
+import { UsersRepository } from "@/repositories/users-repository";
 import { User } from "@prisma/client";
 import { InvalidCredentialsError } from "../erros/invalid-credentials-error";
 
@@ -11,7 +11,7 @@ interface AuthenticateUseCaseResponse {
 }
 
 export class AuthenticateUserStoreUseCase {
-  constructor(private usersStoreRepository: UsersStoreRepository) {}
+  constructor(private usersStoreRepository: UsersRepository) {}
 
   async execute({
     email,
