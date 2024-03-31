@@ -24,10 +24,7 @@ export default function ResetPasswordEmail({ name, url }: AccessEmailProps) {
       <Preview>Recuperar acesso a sua conta.</Preview>
       <Body style={main}>
         <Container className="max-w-96 flex flex-col items-center bg-gray-50 rounded-sm justify-center">
-          <Img
-            src="https://loja.profbiodicas.com.br/wp-content/uploads/2024/03/logo-prof-1.svg"
-            alt="Profbio.Dicas Logo"
-          />
+          <Img src="https://i.imgur.com/ue5OOKt.png" alt="Profbio.Dicas Logo" />
 
           <Text className="text-base">
             <strong>{name}</strong>, você solicitou resetar sua senha? Caso não
