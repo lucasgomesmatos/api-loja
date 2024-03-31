@@ -1,4 +1,4 @@
-import { sendMail } from "@/mail/nodemailer";
+import { sendMailCreateAccount } from "@/mail/nodemailer";
 import { OrderAlreadyExistsError } from "@/use-cases/erros/order-already-exists-error";
 import { makeCreateOrderStoreUseCase } from "@/use-cases/factories/make-create-order-store-use-case";
 import { makeRegisterUserStoreUseCase } from "@/use-cases/factories/make-register-user-store-use-case";
@@ -76,7 +76,7 @@ export async function registerUserStore(
       },
     );
 
-    await sendMail(user?.name, user?.email, token);
+    await sendMailCreateAccount(user?.name, user?.email, token);
   } catch (error: unknown) {
     if (error instanceof OrderAlreadyExistsError) {
       console.error("Order already exists");

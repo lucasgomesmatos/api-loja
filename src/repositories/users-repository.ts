@@ -18,4 +18,6 @@ export interface UsersRepository {
   }>;
 
   update(id: string, data: Prisma.UserUpdateInput): Promise<void>;
+
+  updatePassword(id: string, password: string): Promise<void>;
 }
