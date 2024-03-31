@@ -8,11 +8,11 @@ export async function forgotPassword(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {
-  const authenticateBodySchema = z.object({
+  const forgotPasswordBodySchema = z.object({
     email: z.string().email(),
   });
 
-  const { email } = authenticateBodySchema.parse(request.body);
+  const { email } = forgotPasswordBodySchema.parse(request.body);
 
   try {
     const authenticateUseCase = makeAuthenticateUserStoreUseCase();

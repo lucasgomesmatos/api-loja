@@ -1,4 +1,4 @@
-import { InvalidCredentialsError } from "@/use-cases/erros/invalid-credentials-error";
+import { ResourceNotFoundError } from "@/use-cases/erros/resource-not-found-error";
 import { makeUpdatePasswordUserUseCase } from "@/use-cases/factories/make-update-password-user-use-case";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
@@ -13,6 +13,8 @@ export async function resetPassword(
 
   const { password } = resetPasswordBodySchema.parse(request.body);
 
+  console.log(request.user.sub);
+
   try {
     const updatePasswordUserUseCase = makeUpdatePasswordUserUseCase();
 
@@ -21,8 +23,8 @@ export async function resetPassword(
       password,
     });
   } catch (error) {
-    if (error instanceof InvalidCredentialsError) {
-      return reply.status(401).send({
+    if (error instanceof ResourceNotFoundError) {
+      return reply.status(404).send({
         message: error.message,
       });
     }
