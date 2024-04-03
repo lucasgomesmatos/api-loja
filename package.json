@@ -29,7 +29,8 @@
     "dotenv": "16.4.5",
     "fastify": "^4.26.2",
     "nodemailer": "6.9.13",
-    "zod": "3.22.4"
+    "zod": "3.22.4",
+    "zod-validation-error": "3.0.3"
   },
   "devDependencies": {
     "@rocketseat/eslint-config": "^2.2.2",

@@ -3,6 +3,7 @@ import cors from "@fastify/cors";
 import fastifyJwt from "@fastify/jwt";
 import fastify from "fastify";
 import { ZodError } from "zod";
+import { fromZodError } from "zod-validation-error";
 import { environment } from "./env/env";
 import { categoriesRoutes } from "./http/controllers/admin/categories/routes";
 import { productsRoutes } from "./http/controllers/admin/products/routes";
@@ -36,9 +37,11 @@ app.register(categoriesRoutes);
 
 app.setErrorHandler((error, _, reply) => {
   if (error instanceof ZodError) {
+    const validationError = fromZodError(error);
+
     reply.status(400).send({
       message: "Validation error",
-      issues: error.format(),
+      issues: validationError,
     });
   }
 
