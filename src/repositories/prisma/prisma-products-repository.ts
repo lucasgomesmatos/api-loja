@@ -15,10 +15,16 @@ export class PrismaProductsRepository implements ProductsRepository {
               contains: query,
             },
           },
-          skip: (page - 1) * 16,
-          take: 16,
+          skip: (page - 1) * 12,
+          take: 12,
         }),
-        prisma.product.count(),
+        prisma.product.count({
+          where: {
+            name: {
+              contains: query,
+            },
+          },
+        }),
       ]);
 
       return {
@@ -42,10 +48,23 @@ export class PrismaProductsRepository implements ProductsRepository {
           },
         },
 
-        skip: (page - 1) * 16,
-        take: 16,
+        skip: (page - 1) * 12,
+        take: 12,
       }),
-      prisma.product.count(),
+      prisma.product.count({
+        where: {
+          name: {
+            contains: query,
+          },
+          products: {
+            some: {
+              categoryId: {
+                in: categories,
+              },
+            },
+          },
+        },
+      }),
     ]);
 
     return {
