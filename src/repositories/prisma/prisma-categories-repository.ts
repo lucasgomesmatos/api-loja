@@ -77,7 +77,13 @@ export class PrismaCategoriesRepository implements CategoriesRepository {
           createdAt: "desc",
         },
       }),
-      prisma.category.count(),
+      prisma.category.count({
+        where: {
+          name: {
+            contains: data.query,
+          },
+        },
+      }),
     ]);
 
     return {

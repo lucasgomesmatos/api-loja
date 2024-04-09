@@ -64,7 +64,22 @@ export class PrismaUsersRepository implements UsersRepository {
         skip: data.page ? (data.page - 1) * 16 : 0,
       }),
 
-      prisma.user.count(),
+      prisma.user.count({
+        where: {
+          OR: [
+            {
+              name: {
+                contains: data.query,
+              },
+            },
+            {
+              email: {
+                contains: data.query,
+              },
+            },
+          ],
+        },
+      }),
     ]);
 
     return {
