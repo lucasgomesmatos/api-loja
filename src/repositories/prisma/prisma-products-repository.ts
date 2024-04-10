@@ -7,7 +7,7 @@ import {
 
 export class PrismaProductsRepository implements ProductsRepository {
   async findAllProducts({ query, page, categories }: FindAllProductsParams) {
-    if (!categories) {
+    if (categories?.includes("all")) {
       const [products, total] = await prisma.$transaction([
         prisma.product.findMany({
           where: {

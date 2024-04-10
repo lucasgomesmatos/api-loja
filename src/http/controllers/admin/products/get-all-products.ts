@@ -9,12 +9,11 @@ export async function getAllProducts(
   const productQuerySchema = z.object({
     page: z.coerce.number().min(1).default(1),
     query: z.string().default(""),
-    categories: z.string().optional(),
+    categories: z.string()
   });
 
   const { page, query, categories } = productQuerySchema.parse(request.query);
-
-  const categoriesArray = categories?.split(",");
+  const categoriesArray = categories.split(',');
 
   try {
     const getAllProductsUseCase = makeGetAllProductsUseCase();
