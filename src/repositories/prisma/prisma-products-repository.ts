@@ -74,21 +74,27 @@ export class PrismaProductsRepository implements ProductsRepository {
   }
 
   async create(data: CreateProduct) {
-    const product = await prisma.product.create({
-      data: {
-        idWoocommerce: data.idWoocommerce,
-        name: data.name,
-      },
-    });
 
-    await prisma.productsOnCategories.createMany({
-      data: data.categories.map((categoryId) => ({
-        productId: product.id,
-        categoryId,
-      })),
-    });
+    const [productCreate] = await prisma.$transaction([
+      prisma.product.create({
+        data: {
+          idWoocommerce: data.idWoocommerce,
+          name: data.name,
+        },
 
-    return product;
+      }),
+    ])
+
+    await prisma.$transaction([
+      prisma.productsOnCategories.createMany({
+        data: data.categories.map((categoryId) => ({
+          productId: productCreate.id,
+          categoryId,
+        })),
+      }),
+    ])
+
+    return productCreate;
   }
 
   async findByName(name: string) {
