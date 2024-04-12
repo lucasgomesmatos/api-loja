@@ -6,6 +6,7 @@ import { deleteFiles } from "./delete-files";
 import { deleteProduct } from "./delete-product";
 import { getAllProducts } from "./get-all-products";
 import { getAllFilesByProductId } from "./get-files";
+import { updateProduct } from "./update-product";
 
 export async function productsRoutes(app: FastifyInstance) {
   app.post(
@@ -13,6 +14,13 @@ export async function productsRoutes(app: FastifyInstance) {
     { onRequest: [verifyJwt, verifyUserRole("ADMIN")] },
     createProduct,
   );
+
+  app.put(
+    "/products/:productId",
+    { onRequest: [verifyJwt, verifyUserRole("ADMIN")] },
+    updateProduct,
+  );
+
   app.get(
     "/products",
     { onRequest: [verifyJwt, verifyUserRole("ADMIN")] },

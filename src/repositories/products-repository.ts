@@ -28,6 +28,8 @@ export interface ProductsRepository {
 
   updateById(id: string, data: CreateProduct): Promise<Product>;
 
+
+
   getCategoryByProductId(productId: string): Promise<Category[]>;
 
   getAllProductsById(productsIds: string[]): Promise<Product[]>;
