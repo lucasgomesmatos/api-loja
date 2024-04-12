@@ -1,4 +1,4 @@
-import { makeGetAllProductsByUserUseCase } from "@/use-cases/factories/make-get-all-products-by-user-use-case";
+import { makeGetAllProductsByUserUseCase } from "@/use-cases/factories/products/make-get-all-products-by-user-use-case";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
 

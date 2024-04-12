@@ -3,7 +3,7 @@ import { s3 } from "@/lib/aws-s3";
 import { FilesRepository } from "@/repositories/files-repository";
 import { ProductsRepository } from "@/repositories/products-repository";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
-import { ResourceNotFoundError } from "./erros/resource-not-found-error";
+import { ResourceNotFoundError } from "../erros/resource-not-found-error";
 
 interface DeleteProductUseCaseRequest {
   productId: string;
@@ -13,7 +13,7 @@ export class DeleteProductUseCase {
   constructor(
     private readonly productsRepository: ProductsRepository,
     private readonly filesRepository: FilesRepository,
-  ) {}
+  ) { }
 
   async execute({ productId }: DeleteProductUseCaseRequest): Promise<void> {
     const product = await this.productsRepository.findById(productId);

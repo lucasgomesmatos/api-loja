@@ -15,7 +15,7 @@ interface RegisterUserStoreUseCaseResponse {
 }
 
 export class RegisterUserStoreUseCase {
-  constructor(private usersRepository: UsersRepository) {}
+  constructor(private usersRepository: UsersRepository) { }
 
   async execute({
     email,
@@ -32,14 +32,17 @@ export class RegisterUserStoreUseCase {
       };
     }
 
-    const passwordHash = await hash(cpf!, 6);
+    const newCpfValue = cpf?.replace(/\D/g, "")
+      .replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+
+    const passwordHash = await hash(newCpfValue!, 6);
 
     const user = await this.usersRepository.create({
       name: `${firstName} ${lastName}`,
       email,
       password_hash: passwordHash,
       phone,
-      cpf,
+      cpf: newCpfValue,
     });
 
     return { user };

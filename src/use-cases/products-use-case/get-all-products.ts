@@ -1,5 +1,5 @@
+import { ProductsRepository } from "@/repositories/products-repository";
 import { Product } from "@prisma/client";
-import { ProductsRepository } from "./../repositories/products-repository";
 
 interface GetAllProductsUseCaseRequest {
   query: string;
@@ -13,7 +13,7 @@ interface GetAllProductsUseCaseResponse {
 }
 
 export class GetAllProductsUseCase {
-  constructor(private readonly productsRepository: ProductsRepository) {}
+  constructor(private readonly productsRepository: ProductsRepository) { }
 
   async execute({
     page,
