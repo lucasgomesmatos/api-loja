@@ -52,6 +52,9 @@ export async function registerUserStore(
   });
 
   try {
+
+    if (status !== "completed") return;
+
     const registerUserStoreUseCase = makeRegisterUserStoreUseCase();
     const createOrderStoreUseCase = makeCreateOrderStoreUseCase();
 

@@ -24,8 +24,7 @@ export class CreateOrderUseCase {
     lineItems,
     userId,
   }: CreateOrderUseCaseRequest): Promise<void> {
-    if (status !== "completed") return;
-
+    
     const order = await this.ordersRepository.findById(id);
 
     if (order) {
