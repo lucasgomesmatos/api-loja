@@ -60,8 +60,8 @@ export class PrismaUsersRepository implements UsersRepository {
             },
           ],
         },
-        take: data.page ? 16 : undefined,
-        skip: data.page ? (data.page - 1) * 16 : 0,
+        take: data.page ? 8 : undefined,
+        skip: data.page ? (data.page - 1) * 8 : 0,
       }),
 
       prisma.user.count({
