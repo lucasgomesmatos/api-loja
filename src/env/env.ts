@@ -13,6 +13,7 @@ const envSchema = z.object({
     .default("development"),
   PORT: z.coerce.number().default(3333),
   JWT_SECRET: z.string(),
+  DATABASE_URL: z.string().url().or(z.string().startsWith('mysql://')),
   AWS_BASE_URL: z.string(),
   AWS_BUCKET_NAME: z.string(),
   AWS_DEFAULT_REGION: z.string(),

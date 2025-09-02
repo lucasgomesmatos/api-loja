@@ -18,7 +18,7 @@ export async function sendMailCreateAccount(
   email?: string,
   token?: string,
 ) {
-  const emailHtml = render(
+  const emailHtml = await render(
     AccessUserEmail({
       name,
       url: `${environment.FRONT_URL}/api/auth-token?token=${token}`,
@@ -39,7 +39,7 @@ export async function sendMailResetPassword(
   email?: string,
   token?: string,
 ) {
-  const emailHtml = render(
+  const emailHtml = await render(
     ResetPasswordEmail({
       name,
       url: `${environment.FRONT_URL}/api/reset-password?token=${token}`,
