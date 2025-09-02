@@ -1,5 +1,6 @@
-import { ProductsRepository } from "@/repositories/products-repository";
 import { ProductAlreadyExistsError } from "../erros/product-already-exists-error";
+
+import { ProductsRepository } from "@/repositories/products-repository";
 
 interface CreateProductUseCaseRequest {
   name: string;

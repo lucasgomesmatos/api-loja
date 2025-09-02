@@ -1,7 +1,8 @@
+import { DeleteObjectCommand } from "@aws-sdk/client-s3";
+
 import { environment } from "@/env/env";
 import { s3 } from "@/lib/aws-s3";
 import { FilesRepository } from "@/repositories/files-repository";
-import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 
 
 interface DeleteFilesUseCaseRequest {

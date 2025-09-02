@@ -1,10 +1,12 @@
-import { verifyJwt } from "@/http/middlewares/verify-jwt";
-import { verifyUserRole } from "@/http/middlewares/verify-user-role";
 import { FastifyInstance } from "fastify";
+
 import { createCategory } from "./create-category";
 import { deleteCategory } from "./delete-category";
 import { getAllCategories } from "./get-all-categories";
 import { updateCategory } from "./update-category";
+
+import { verifyJwt } from "@/http/middlewares/verify-jwt";
+import { verifyUserRole } from "@/http/middlewares/verify-user-role";
 
 export async function categoriesRoutes(app: FastifyInstance) {
   app.get(

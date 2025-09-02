@@ -1,6 +1,7 @@
-import { makeGetAllCategoriesUseCase } from "@/use-cases/factories/categories/make-get-all-categories-use-case";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
+
+import { makeGetAllCategoriesUseCase } from "@/use-cases/factories/categories/make-get-all-categories-use-case";
 
 export async function getAllCategories(
   request: FastifyRequest,

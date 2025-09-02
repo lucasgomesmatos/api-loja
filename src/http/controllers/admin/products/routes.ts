@@ -1,12 +1,14 @@
-import { verifyJwt } from "@/http/middlewares/verify-jwt";
-import { verifyUserRole } from "@/http/middlewares/verify-user-role";
 import { FastifyInstance } from "fastify";
+
 import { createProduct } from "./create-product";
 import { deleteFiles } from "./delete-files";
 import { deleteProduct } from "./delete-product";
 import { getAllProducts } from "./get-all-products";
 import { getAllFilesByProductId } from "./get-files";
 import { updateProduct } from "./update-product";
+
+import { verifyJwt } from "@/http/middlewares/verify-jwt";
+import { verifyUserRole } from "@/http/middlewares/verify-user-role";
 
 export async function productsRoutes(app: FastifyInstance) {
   app.post(

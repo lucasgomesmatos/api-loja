@@ -1,9 +1,11 @@
+import { DeleteObjectCommand } from "@aws-sdk/client-s3";
+
+import { ResourceNotFoundError } from "../erros/resource-not-found-error";
+
 import { environment } from "@/env/env";
 import { s3 } from "@/lib/aws-s3";
 import { FilesRepository } from "@/repositories/files-repository";
 import { ProductsRepository } from "@/repositories/products-repository";
-import { DeleteObjectCommand } from "@aws-sdk/client-s3";
-import { ResourceNotFoundError } from "../erros/resource-not-found-error";
 
 interface DeleteProductUseCaseRequest {
   productId: string;

@@ -1,10 +1,11 @@
+import { GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { Category } from "@prisma/client";
+
 import { environment } from "@/env/env";
 import { s3 } from "@/lib/aws-s3";
 import { FilesRepository } from "@/repositories/files-repository";
 import { ProductsRepository } from "@/repositories/products-repository";
-import { GetObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { Category } from "@prisma/client";
 
 interface GetFilesUseCaseRequest {
   productId: string;

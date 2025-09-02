@@ -1,10 +1,11 @@
-import { makeUploadFilesUseCase } from '@/use-cases/factories/files/make-upload-files-use-case';
 
-import { ProductAlreadyExistsError } from '@/use-cases/erros/product-already-exists-error';
-import { makeCreateProductUseCase } from "@/use-cases/factories/products/make-create-product-use-case";
 import { S3ServiceException } from "@aws-sdk/client-s3";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
+
+import { ProductAlreadyExistsError } from '@/use-cases/erros/product-already-exists-error';
+import { makeUploadFilesUseCase } from '@/use-cases/factories/files/make-upload-files-use-case';
+import { makeCreateProductUseCase } from "@/use-cases/factories/products/make-create-product-use-case";
 
 export async function createProduct(
   request: FastifyRequest,

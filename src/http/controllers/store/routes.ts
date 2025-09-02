@@ -1,9 +1,11 @@
-import { verifyJwt } from "@/http/middlewares/verify-jwt";
 import { FastifyInstance } from "fastify";
+
 import { authenticateUserStore } from "./authenticate";
 import { getAllProductsByUser } from "./get-all-products-by-user";
 import { refreshTokenStore } from "./refresh";
 import { registerUserStore } from "./register";
+
+import { verifyJwt } from "@/http/middlewares/verify-jwt";
 
 export async function usersStoreRoutes(app: FastifyInstance) {
   app.post("/store/webhook", registerUserStore);

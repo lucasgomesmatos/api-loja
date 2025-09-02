@@ -1,8 +1,9 @@
+import { FastifyReply, FastifyRequest } from "fastify";
+import { z } from "zod";
+
 import { UserAlreadyExistsError } from "@/use-cases/erros/user-already-exists-error";
 import { makeUpdateUserUseCase } from "@/use-cases/factories/make-update-user-use-case";
 
-import { FastifyReply, FastifyRequest } from "fastify";
-import { z } from "zod";
 
 export async function updateUser(request: FastifyRequest, reply: FastifyReply) {
   const updateUserBodySchema = z.object({

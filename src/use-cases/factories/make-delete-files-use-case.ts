@@ -1,5 +1,6 @@
-import { PrismaFilesRepository } from "@/repositories/prisma/prisma-files-repository";
 import { DeleteFilesUseCase } from "../files-use-case/delete-files";
+
+import { PrismaFilesRepository } from "@/repositories/prisma/prisma-files-repository";
 
 export function makeDeleteFilesUseCase() {
   const prismaFilesRepository = new PrismaFilesRepository();

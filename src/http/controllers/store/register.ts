@@ -1,10 +1,11 @@
+import { FastifyReply, FastifyRequest } from "fastify";
+import { z } from "zod";
+
 import { sendMailCreateAccount } from "@/mail/nodemailer";
 import { OrderAlreadyExistsError } from "@/use-cases/erros/order-already-exists-error";
 import { makeCreateOrderStoreUseCase } from "@/use-cases/factories/make-create-order-store-use-case";
 import { makeRegisterUserStoreUseCase } from "@/use-cases/factories/make-register-user-store-use-case";
 
-import { FastifyReply, FastifyRequest } from "fastify";
-import { z } from "zod";
 
 export async function registerUserStore(
   request: FastifyRequest,

@@ -1,7 +1,8 @@
-import { ResourceNotFoundError } from "@/use-cases/erros/resource-not-found-error";
-import { makeDeleteProductUseCase } from "@/use-cases/factories/make-delete-product-use-case";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
+
+import { ResourceNotFoundError } from "@/use-cases/erros/resource-not-found-error";
+import { makeDeleteProductUseCase } from "@/use-cases/factories/make-delete-product-use-case";
 
 export async function deleteProduct(
   request: FastifyRequest,

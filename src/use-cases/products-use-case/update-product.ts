@@ -1,5 +1,6 @@
-import { ProductsRepository } from "@/repositories/products-repository";
 import { ResourceNotFoundError } from "../erros/resource-not-found-error";
+
+import { ProductsRepository } from "@/repositories/products-repository";
 
 interface UpdateProductUseCaseRequest {
   productId: string;

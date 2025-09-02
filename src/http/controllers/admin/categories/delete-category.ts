@@ -1,6 +1,7 @@
-import { makeDeleteCategoryUseCase } from "@/use-cases/factories/categories/make-delete-category-use-case";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
+
+import { makeDeleteCategoryUseCase } from "@/use-cases/factories/categories/make-delete-category-use-case";
 
 export async function deleteCategory(
   request: FastifyRequest,

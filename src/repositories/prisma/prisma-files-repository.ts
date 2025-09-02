@@ -1,9 +1,10 @@
-import { prisma } from "@/lib/prisma";
 import {
   FileProps,
   FilesRepository,
   GetAllFileProps,
 } from "../files-repository";
+
+import { prisma } from "@/lib/prisma";
 
 export class PrismaFilesRepository implements FilesRepository {
   async create(data: FileProps) {

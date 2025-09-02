@@ -1,5 +1,6 @@
-import { prisma } from "@/lib/prisma";
 import { OrderProps, OrdersRepository } from "../orders-repository";
+
+import { prisma } from "@/lib/prisma";
 
 export class PrismaOrdersRepository implements OrdersRepository {
   async create(data: OrderProps): Promise<void> {

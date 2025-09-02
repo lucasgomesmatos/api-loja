@@ -1,9 +1,12 @@
+import { randomUUID } from "node:crypto";
+
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
 import { environment } from "@/env/env";
 import { s3 } from "@/lib/aws-s3";
 import { FilesRepository } from "@/repositories/files-repository";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { randomUUID } from "node:crypto";
+
 
 interface FileContent {
   name: string;

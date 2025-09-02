@@ -1,6 +1,7 @@
-import { makeUpdateCategoryUseCase } from "@/use-cases/factories/categories/make-update-category-use-case";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
+
+import { makeUpdateCategoryUseCase } from "@/use-cases/factories/categories/make-update-category-use-case";
 
 export async function updateCategory(
   request: FastifyRequest,

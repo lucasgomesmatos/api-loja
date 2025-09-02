@@ -1,7 +1,8 @@
-import { ResourceNotFoundError } from "@/use-cases/erros/resource-not-found-error";
-import { makeUpdatePasswordUserUseCase } from "@/use-cases/factories/make-update-password-user-use-case";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
+
+import { ResourceNotFoundError } from "@/use-cases/erros/resource-not-found-error";
+import { makeUpdatePasswordUserUseCase } from "@/use-cases/factories/make-update-password-user-use-case";
 
 export async function resetPassword(
   request: FastifyRequest,

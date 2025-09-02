@@ -1,6 +1,7 @@
-import { makeGetAllUsersUseCase } from "@/use-cases/factories/make-get-all-users-use-case";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
+
+import { makeGetAllUsersUseCase } from "@/use-cases/factories/make-get-all-users-use-case";
 
 export async function getAllUsers(
   request: FastifyRequest,

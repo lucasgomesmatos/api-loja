@@ -1,6 +1,7 @@
-import { makeGetFilesUseCase } from "@/use-cases/factories/make-get-files-use-case";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
+
+import { makeGetFilesUseCase } from "@/use-cases/factories/make-get-files-use-case";
 
 export async function getAllFilesByProductId(
   request: FastifyRequest,

@@ -1,6 +1,7 @@
-import { makeDeleteFilesUseCase } from "@/use-cases/factories/make-delete-files-use-case";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
+
+import { makeDeleteFilesUseCase } from "@/use-cases/factories/make-delete-files-use-case";
 
 export async function deleteFiles(
   request: FastifyRequest,

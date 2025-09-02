@@ -1,9 +1,10 @@
-import { prisma } from "@/lib/prisma";
 import {
   CreateProduct,
   FindAllProductsParams,
   ProductsRepository,
 } from "../products-repository";
+
+import { prisma } from "@/lib/prisma";
 
 export class PrismaProductsRepository implements ProductsRepository {
   async findAllProducts({ query, page, categories }: FindAllProductsParams) {

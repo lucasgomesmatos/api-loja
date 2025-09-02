@@ -1,8 +1,9 @@
+import { FastifyReply, FastifyRequest } from "fastify";
+import { z } from "zod";
+
 import { sendMailResetPassword } from "@/mail/nodemailer";
 import { InvalidCredentialsError } from "@/use-cases/erros/invalid-credentials-error";
 import { makeAuthenticateUserStoreUseCase } from "@/use-cases/factories/make-authenticate-user-store-use-case";
-import { FastifyReply, FastifyRequest } from "fastify";
-import { z } from "zod";
 
 export async function forgotPassword(
   request: FastifyRequest,

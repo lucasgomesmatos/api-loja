@@ -1,5 +1,6 @@
-import { UsersRepository } from "@/repositories/users-repository";
 import { User } from "@prisma/client";
+
+import { UsersRepository } from "@/repositories/users-repository";
 
 interface GetAllUsersUseCaseRequest {
   query: string | undefined;

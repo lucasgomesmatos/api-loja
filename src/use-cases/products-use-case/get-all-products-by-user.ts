@@ -1,6 +1,7 @@
+import { Product } from "@prisma/client";
+
 import { OrdersRepository } from "@/repositories/orders-repository";
 import { ProductsRepository } from "@/repositories/products-repository";
-import { Product } from "@prisma/client";
 
 interface GetAllProductsByUserUseCaseRequest {
   query: string;

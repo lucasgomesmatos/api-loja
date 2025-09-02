@@ -1,8 +1,10 @@
-import { environment } from "@/env/env";
 import { render } from "@react-email/render";
 import nodemailer from "nodemailer";
+
 import AccessUserEmail from "./templates/access-user-email";
 import ResetPasswordEmail from "./templates/reset-password-email";
+
+import { environment } from "@/env/env";
 
 export const transport = nodemailer.createTransport({
   host: environment.EMAIL_HOST,

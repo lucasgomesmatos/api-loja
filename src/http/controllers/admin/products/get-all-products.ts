@@ -1,6 +1,7 @@
-import { makeGetAllProductsUseCase } from "@/use-cases/factories/products/make-get-all-products-use-case";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
+
+import { makeGetAllProductsUseCase } from "@/use-cases/factories/products/make-get-all-products-use-case";
 
 export async function getAllProducts(
   request: FastifyRequest,

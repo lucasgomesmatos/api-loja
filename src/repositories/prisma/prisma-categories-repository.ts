@@ -1,8 +1,9 @@
-import { prisma } from "@/lib/prisma";
 import {
   CategoriesRepository,
   FindAllCategoriesParams,
 } from "../categories-repository";
+
+import { prisma } from "@/lib/prisma";
 
 export class PrismaCategoriesRepository implements CategoriesRepository {
   async create(name: string) {

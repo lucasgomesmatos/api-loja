@@ -1,5 +1,6 @@
-import { app } from "@/app";
 import { environment } from "./env/env";
+
+import { app } from "@/app";
 
 app
   .listen({
