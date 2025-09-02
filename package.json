@@ -1,7 +1,7 @@
 {
-  "name": "api-loja",
+  "name": "api-integracao-profbiodicas",
   "version": "1.0.0",
-  "description": "",
+  "description": "API de integração para plataforma profbiodicas - gerenciamento de produtos, usuários e integração com WooCommerce",
   "main": "index.js",
   "engines": {
     "node": ">=20"
